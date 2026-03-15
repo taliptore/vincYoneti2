@@ -2,6 +2,7 @@ using System.Text;
 using CraneManagementSystem.Persistence;
 using CraneManagementSystem.Infrastructure;
 using CraneManagementSystem.API.Middleware;
+using CraneManagementSystem.API.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -82,6 +83,9 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
+// İlk çalıştırmada Admin kullanıcı yoksa oluştur (Seed)
+await DataSeeder.EnsureAdminUserAsync(app.Services);
 
 // Pipeline: Exception middleware en üstte
 app.UseMiddleware<ExceptionMiddleware>();
