@@ -1,0 +1,53 @@
+@model List<CraneManagementSystem.Web.ViewModels.NewsItemViewModel>
+@{
+    ViewData["Title"] = "Haber Yönetimi";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Haber Yönetimi</h2>
+    <a class="btn btn-primary" asp-action="NewsCreate">Yeni Haber</a>
+</div>
+<div class="card card-modern">
+    <div class="card-body p-0">
+        @if (Model?.Any() == true)
+        {
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead>
+                        <tr>
+                            <th>Başlık</th>
+                            <th>Özet</th>
+                            <th>Durum</th>
+                            <th>Tarih</th>
+                            <th style="width:160px;">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var n in Model.OrderByDescending(x => x.CreatedAt))
+                        {
+                            <tr>
+                                <td>@n.Title</td>
+                                <td>@(n.Summary != null && n.Summary.Length > 50 ? n.Summary.Substring(0, 50) + "…" : n.Summary)</td>
+                                <td>@(n.IsPublished ? "Yayında" : "Taslak")</td>
+                                <td>@n.CreatedAt.ToString("d")</td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary me-1" asp-action="NewsEdit" asp-route-id="@n.Id">Düzenle</a>
+                                    <form asp-action="NewsDelete" asp-route-id="@n.Id" method="post" class="d-inline" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state p-5 text-center text-muted">
+                <p class="mb-0">Henüz haber yok.</p>
+                <a class="btn btn-primary mt-3" asp-action="NewsCreate">İlk Haberi Ekle</a>
+            </div>
+        }
+    </div>
+</div>

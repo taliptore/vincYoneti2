@@ -1,0 +1,55 @@
+@model CraneManagementSystem.Web.ViewModels.HomePageViewModel
+<footer class="site-footer border-top">
+    <div class="container">
+        <div class="row py-4">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <strong class="d-block mb-2">TORE VINC</strong>
+                @if (!string.IsNullOrEmpty(Model?.ContactAddress))
+                {
+                    <p class="small text-muted mb-1">@Model.ContactAddress</p>
+                }
+                @if (!string.IsNullOrEmpty(Model?.ContactPhone))
+                {
+                    <p class="small mb-0"><a href="tel:@Model.ContactPhone">@Model.ContactPhone</a></p>
+                }
+            </div>
+            <div class="col-md-4 mb-4 mb-md-0">
+                <strong class="d-block mb-2">Hızlı Linkler</strong>
+                <ul class="list-unstyled small">
+                    <li><a asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
+                    <li><a href="#hizmetler">Hizmetler</a></li>
+                    <li><a href="#hakkimizda">Hakkımızda</a></li>
+                    <li><a href="#galeri">Galeri</a></li>
+                    <li><a href="#haberler">Haberler</a></li>
+                    <li><a href="#iletisim">İletişim</a></li>
+                    <li><a asp-controller="Home" asp-action="Contact">İletişim Formu</a></li>
+                    <li><a asp-controller="Home" asp-action="Privacy">Gizlilik</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4">
+                <strong class="d-block mb-2">Sosyal Medya</strong>
+                <div class="footer-social">
+                    @if (!string.IsNullOrEmpty(Model?.SocialFacebook))
+                    {
+                        <a href="@Model.SocialFacebook" target="_blank" rel="noopener" class="me-2" aria-label="Facebook">Facebook</a>
+                    }
+                    @if (!string.IsNullOrEmpty(Model?.SocialInstagram))
+                    {
+                        <a href="@Model.SocialInstagram" target="_blank" rel="noopener" class="me-2" aria-label="Instagram">Instagram</a>
+                    }
+                    @if (!string.IsNullOrEmpty(Model?.SocialLinkedIn))
+                    {
+                        <a href="@Model.SocialLinkedIn" target="_blank" rel="noopener" class="me-2" aria-label="LinkedIn">LinkedIn</a>
+                    }
+                    @if (string.IsNullOrEmpty(Model?.SocialFacebook) && string.IsNullOrEmpty(Model?.SocialInstagram) && string.IsNullOrEmpty(Model?.SocialLinkedIn))
+                    {
+                        <span class="text-muted small">Sosyal medya linkleri panelden eklenebilir.</span>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom py-3 border-top text-center text-muted small">
+            &copy; @DateTime.Now.Year TORE VINC. Tüm hakları saklıdır.
+        </div>
+    </div>
+</footer>

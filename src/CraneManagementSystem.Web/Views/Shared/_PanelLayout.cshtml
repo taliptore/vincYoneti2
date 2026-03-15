@@ -1,3 +1,9 @@
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var role = ViewData["AuthRole"] as string ?? "";
+    bool Show(string roles) => roles.Split(',').Any(r => r.Trim() == role);
+}
 <!DOCTYPE html>
 <html lang="tr">
 <head>
@@ -6,46 +12,83 @@
     <title>@ViewData["Title"] - TORE VINC Yönetim</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .panel-sidebar { min-width: 220px; background: var(--tv-primary-dark, #0f2744); }
+        .panel-sidebar .nav-link { color: rgba(255,255,255,0.85); padding: 0.5rem 1rem; border-radius: 6px; }
+        .panel-sidebar .nav-link:hover { background: rgba(255,255,255,0.1); color: #fff; }
+        .panel-sidebar .nav-link.active { background: var(--tv-accent, #3182ce); color: #fff; }
+        .panel-sidebar .nav-section { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.05em; color: rgba(255,255,255,0.5); padding: 0.75rem 1rem 0.25rem; }
+    </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-dark bg-primary">
+    <header class="panel-header">
+        <nav class="navbar navbar-expand-md navbar-dark">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-controller="Panel" asp-action="Index">TORE VINC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#panelNav">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#panelNav" aria-controls="panelNav" aria-expanded="false" aria-label="Menüyü aç">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="panelNav">
                     <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Panel" asp-action="Index">Dashboard</a>
-                        </li>
-                        @if (ViewData["AuthRole"] as string is string role && (role == "Admin" || role == "Muhasebe" || role == "Firma"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Panel" asp-action="Companies">Firmalar</a>
-                            </li>
-                        }
+                        <li class="nav-item"><a class="nav-link @(currentAction == "Index" ? "active" : "")" asp-controller="Panel" asp-action="Index">Dashboard</a></li>
                     </ul>
                     <ul class="navbar-nav">
+                        <li class="nav-item"><span class="navbar-text text-white me-3">@(ViewData["AuthName"] ?? "")</span></li>
                         <li class="nav-item">
-                            <span class="navbar-text text-white me-2">@(ViewData["AuthName"] ?? "")</span>
-                        </li>
-                        <li class="nav-item">
-                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-outline-light btn-sm">Çıkış</button>
-                            </form>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">@Html.AntiForgeryToken()<button type="submit" class="btn btn-outline-light btn-sm">Çıkış</button></form>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container mt-3">
-        <main role="main">
-            @RenderBody()
-        </main>
+    <div class="d-flex">
+        <nav class="panel-sidebar d-none d-md-block flex-shrink-0 py-3" style="width: 220px;">
+            <ul class="nav flex-column">
+                <li class="nav-section">İşlemler</li>
+                @if (Show("Admin") || Show("Muhasebe") || Show("Firma")) {
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Companies" ? "active" : "")" asp-controller="Panel" asp-action="Companies">Firmalar</a></li>
+                }
+                @if (Show("Admin") || Show("Muhasebe") || Show("Operatör") || Show("Firma")) {
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Cranes" ? "active" : "")" asp-controller="Panel" asp-action="Cranes">Vinçler</a></li>
+                }
+                @if (Show("Admin") || Show("Operatör")) {
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Operators" ? "active" : "")" asp-controller="Panel" asp-action="Operators">Operatörler</a></li>
+                }
+                @if (Show("Admin") || Show("Muhasebe") || Show("Operatör")) {
+                    <li class="nav-item"><a class="nav-link @(currentAction == "ConstructionSites" ? "active" : "")" asp-controller="Panel" asp-action="ConstructionSites">Şantiyeler</a></li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "WorkPlans" ? "active" : "")" asp-controller="Panel" asp-action="WorkPlans">İş Planlama</a></li>
+                }
+                @if (Show("Admin") || Show("Muhasebe") || Show("Operatör") || Show("Firma")) {
+                    <li class="nav-item"><a class="nav-link @(currentAction == "ProgressPayments" ? "active" : "")" asp-controller="Panel" asp-action="ProgressPayments">Hakediş</a></li>
+                }
+                @if (Show("Admin") || Show("Muhasebe") || Show("Operatör")) {
+                    <li class="nav-item"><a class="nav-link @(currentAction == "DailyWages" ? "active" : "")" asp-controller="Panel" asp-action="DailyWages">Yevmiye</a></li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Overtimes" ? "active" : "")" asp-controller="Panel" asp-action="Overtimes">Mesai</a></li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "IncomeExpenses" ? "active" : "")" asp-controller="Panel" asp-action="IncomeExpenses">Gelir-Gider</a></li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "FuelTracking" ? "active" : "")" asp-controller="Panel" asp-action="FuelTracking">Yakıt Takibi</a></li>
+                }
+                @if (Show("Admin") || Show("Operatör")) {
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Maintenance" ? "active" : "")" asp-controller="Panel" asp-action="Maintenance">Bakım</a></li>
+                }
+                @if (Show("Admin") || Show("Muhasebe") || Show("Operatör") || Show("Firma")) {
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Reports" ? "active" : "")" asp-controller="Panel" asp-action="Reports">Raporlar</a></li>
+                }
+                @if (Show("Admin")) {
+                    <li class="nav-section mt-3">Yönetim</li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Users" ? "active" : "")" asp-controller="Panel" asp-action="Users">Kullanıcı Yönetimi</a></li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Settings" ? "active" : "")" asp-controller="Panel" asp-action="Settings">Sistem Ayarları</a></li>
+                    <li class="nav-section mt-3">İçerik (CMS)</li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Sliders" ? "active" : "")" asp-controller="Panel" asp-action="Sliders">Slider</a></li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "News" ? "active" : "")" asp-controller="Panel" asp-action="News">Haber</a></li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "Gallery" ? "active" : "")" asp-controller="Panel" asp-action="Gallery">Galeri</a></li>
+                    <li class="nav-item"><a class="nav-link @(currentAction == "About" ? "active" : "")" asp-controller="Panel" asp-action="About">Hakkımızda</a></li>
+                }
+            </ul>
+        </nav>
+        <div class="container panel-main flex-grow-1 py-4">
+            <main role="main">@RenderBody()</main>
+        </div>
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

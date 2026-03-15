@@ -1,0 +1,43 @@
+@model CraneManagementSystem.Web.ViewModels.SliderEditViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Slider Düzenle" : "Yeni Slider";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(Model.Id.HasValue ? "SliderEdit" : "SliderCreate")" method="post">
+            @Html.AntiForgeryToken()
+            @if (Model.Id.HasValue) { <input type="hidden" asp-for="Id" /> }
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Başlık *</label>
+                <input asp-for="Title" class="form-control" required />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ShortText" class="form-label">Kısa Metin</label>
+                <input asp-for="ShortText" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">Görsel URL</label>
+                <input asp-for="ImageUrl" class="form-control" />
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="SortOrder" class="form-label">Sıra</label>
+                    <input asp-for="SortOrder" class="form-control" type="number" />
+                </div>
+                <div class="col-md-6 mb-3 d-flex align-items-end">
+                    <div class="form-check">
+                        <input asp-for="IsActive" class="form-check-input" />
+                        <label asp-for="IsActive" class="form-check-label">Aktif (ana sayfada göster)</label>
+                    </div>
+                </div>
+            </div>
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <div>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a class="btn btn-outline-secondary ms-2" asp-action="Sliders">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>

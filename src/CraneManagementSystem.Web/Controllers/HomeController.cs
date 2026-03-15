@@ -46,7 +46,7 @@ public class HomeController : Controller
         if (success)
         {
             TempData["ContactSuccess"] = true;
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), null, "iletisim");
         }
         ModelState.AddModelError("", "Mesaj gönderilemedi. Lütfen tekrar deneyin.");
         return View(model);
@@ -79,6 +79,12 @@ public class HomeController : Controller
             return RedirectToAction(nameof(Index));
         }
         ModelState.AddModelError("", "Randevu talebi gönderilemedi. Lütfen tekrar deneyin.");
+        return View(model);
+    }
+
+    public async Task<IActionResult> About(CancellationToken cancellationToken)
+    {
+        var model = await _api.GetAsync<HomePageViewModel>("api/home", cancellationToken) ?? new HomePageViewModel();
         return View(model);
     }
 

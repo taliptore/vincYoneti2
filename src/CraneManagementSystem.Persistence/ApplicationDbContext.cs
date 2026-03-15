@@ -27,6 +27,13 @@ public class ApplicationDbContext : DbContext
     public DbSet<Announcement> Announcements => Set<Announcement>();
     public DbSet<ContactMessage> ContactMessages => Set<ContactMessage>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
+    public DbSet<Slider> Sliders => Set<Slider>();
+    public DbSet<GalleryItem> GalleryItems => Set<GalleryItem>();
+    public DbSet<Role> Roles => Set<Role>();
+    public DbSet<Permission> Permissions => Set<Permission>();
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+    public DbSet<Menu> Menus => Set<Menu>();
+    public DbSet<MenuRole> MenuRoles => Set<MenuRole>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

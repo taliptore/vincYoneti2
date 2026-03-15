@@ -89,6 +89,36 @@ public class ApiClient : IApiClient
         return response.IsSuccessStatusCode;
     }
 
+    public async Task<T?> PutAsync<T>(string path, object? body, CancellationToken cancellationToken = default) where T : class
+    {
+        ApplyAuthHeader();
+        var content = body == null ? null : new StringContent(JsonSerializer.Serialize(body, JsonOptions), Encoding.UTF8, "application/json");
+        var response = content == null
+            ? await _httpClient.PutAsync(path, null, cancellationToken)
+            : await _httpClient.PutAsync(path, content, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+            return null;
+        var json = await response.Content.ReadAsStringAsync(cancellationToken);
+        return string.IsNullOrEmpty(json) ? null : JsonSerializer.Deserialize<T>(json, JsonOptions);
+    }
+
+    public async Task<bool> PutAsync(string path, object? body, CancellationToken cancellationToken = default)
+    {
+        ApplyAuthHeader();
+        var content = body == null ? null : new StringContent(JsonSerializer.Serialize(body, JsonOptions), Encoding.UTF8, "application/json");
+        var response = content == null
+            ? await _httpClient.PutAsync(path, null, cancellationToken)
+            : await _httpClient.PutAsync(path, content, cancellationToken);
+        return response.IsSuccessStatusCode;
+    }
+
+    public async Task<bool> DeleteAsync(string path, CancellationToken cancellationToken = default)
+    {
+        ApplyAuthHeader();
+        var response = await _httpClient.DeleteAsync(path, cancellationToken);
+        return response.IsSuccessStatusCode;
+    }
+
     public async Task<HttpResponseMessage> PostResponseAsync(string path, object? body, CancellationToken cancellationToken = default)
     {
         ApplyAuthHeader();

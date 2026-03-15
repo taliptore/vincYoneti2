@@ -1,0 +1,41 @@
+@model CraneManagementSystem.Web.ViewModels.NewsEditViewModel
+@{
+    ViewData["Title"] = Model.Id.HasValue ? "Haber Düzenle" : "Yeni Haber";
+}
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="@(Model.Id.HasValue ? "NewsEdit" : "NewsCreate")" method="post">
+            @Html.AntiForgeryToken()
+            @if (Model.Id.HasValue) { <input type="hidden" asp-for="Id" /> }
+            <div class="mb-3">
+                <label asp-for="Title" class="form-label">Başlık *</label>
+                <input asp-for="Title" class="form-control" required />
+                <span asp-validation-for="Title" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Summary" class="form-label">Özet</label>
+                <input asp-for="Summary" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Body" class="form-label">İçerik</label>
+                <textarea asp-for="Body" class="form-control" rows="5"></textarea>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">Görsel URL</label>
+                <input asp-for="ImageUrl" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <div class="form-check">
+                    <input asp-for="IsPublished" class="form-check-input" />
+                    <label asp-for="IsPublished" class="form-check-label">Yayında</label>
+                </div>
+            </div>
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <div>
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+                <a class="btn btn-outline-secondary ms-2" asp-action="News">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>

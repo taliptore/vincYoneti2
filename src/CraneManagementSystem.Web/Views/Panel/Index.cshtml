@@ -4,80 +4,57 @@
     Layout = "~/Views/Shared/_PanelLayout.cshtml";
 }
 
-<h1 class="mb-4">Dashboard</h1>
+<h1 class="panel-page-title">Dashboard</h1>
 
-<div class="row">
-    <div class="col-md-2 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h6 class="card-title">Firmalar</h6>
-                <p class="card-text display-6">@Model.TotalCompanies</p>
-            </div>
-        </div>
+<div class="dashboard-grid mb-5">
+    <div class="dashboard-card">
+        <div class="dashboard-label">Firmalar</div>
+        <div class="dashboard-value">@Model.TotalCompanies</div>
     </div>
-    <div class="col-md-2 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h6 class="card-title">Vinçler</h6>
-                <p class="card-text display-6">@Model.TotalCranes</p>
-            </div>
-        </div>
+    <div class="dashboard-card">
+        <div class="dashboard-label">Vinçler</div>
+        <div class="dashboard-value">@Model.TotalCranes</div>
     </div>
-    <div class="col-md-2 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h6 class="card-title">Aktif Vinç</h6>
-                <p class="card-text display-6">@Model.ActiveCranes</p>
-            </div>
-        </div>
+    <div class="dashboard-card">
+        <div class="dashboard-label">Aktif Vinç</div>
+        <div class="dashboard-value">@Model.ActiveCranes</div>
     </div>
-    <div class="col-md-2 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h6 class="card-title">Şantiyeler</h6>
-                <p class="card-text display-6">@Model.TotalConstructionSites</p>
-            </div>
-        </div>
+    <div class="dashboard-card">
+        <div class="dashboard-label">Şantiyeler</div>
+        <div class="dashboard-value">@Model.TotalConstructionSites</div>
     </div>
-    <div class="col-md-2 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h6 class="card-title">Operatörler</h6>
-                <p class="card-text display-6">@Model.TotalOperators</p>
-            </div>
-        </div>
+    <div class="dashboard-card">
+        <div class="dashboard-label">Operatörler</div>
+        <div class="dashboard-value">@Model.TotalOperators</div>
     </div>
-    <div class="col-md-2 mb-3">
-        <div class="card">
-            <div class="card-body">
-                <h6 class="card-title">Bekleyen Randevu</h6>
-                <p class="card-text display-6">@Model.PendingAppointments</p>
-            </div>
-        </div>
+    <div class="dashboard-card">
+        <div class="dashboard-label">Bekleyen Randevu</div>
+        <div class="dashboard-value">@Model.PendingAppointments</div>
     </div>
 </div>
+
 <div class="row">
-    <div class="col-md-4 mb-3">
-        <div class="card">
+    <div class="col-12 col-md-4 mb-4">
+        <div class="card card-modern h-100">
             <div class="card-body">
-                <h5 class="card-title">Bu Ay Gelir</h5>
-                <p class="card-text display-6">@Model.TotalIncomeThisMonth.ToString("N2") ₺</p>
+                <div class="card-title">Bu Ay Gelir</div>
+                <div class="card-value">@Model.TotalIncomeThisMonth.ToString("N2") ₺</div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card">
+    <div class="col-12 col-md-4 mb-4">
+        <div class="card card-modern h-100">
             <div class="card-body">
-                <h5 class="card-title">Bu Ay Gider</h5>
-                <p class="card-text display-6">@Model.TotalExpenseThisMonth.ToString("N2") ₺</p>
+                <div class="card-title">Bu Ay Gider</div>
+                <div class="card-value">@Model.TotalExpenseThisMonth.ToString("N2") ₺</div>
             </div>
         </div>
     </div>
-    <div class="col-md-4 mb-3">
-        <div class="card">
+    <div class="col-12 col-md-4 mb-4">
+        <div class="card card-modern h-100">
             <div class="card-body">
-                <h5 class="card-title">Okunmamış İletişim</h5>
-                <p class="card-text display-6">@Model.UnreadContactMessages</p>
+                <div class="card-title">Okunmamış İletişim</div>
+                <div class="card-value">@Model.UnreadContactMessages</div>
             </div>
         </div>
     </div>

@@ -4,44 +4,50 @@
     Layout = "~/Views/Shared/_PanelLayout.cshtml";
 }
 
-<h1 class="mb-4">Firmalar</h1>
+<h1 class="panel-page-title">Firmalar</h1>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Ad</th>
-            <th>Vergi No</th>
-            <th>Telefon</th>
-            <th>E-posta</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model.Items?.Any() == true)
-        {
-            @foreach (var c in Model.Items)
+<div class="table-wrapper">
+    <table class="table table-modern table-striped mb-0">
+        <thead>
+            <tr>
+                <th>Ad</th>
+                <th>Vergi No</th>
+                <th>Telefon</th>
+                <th>E-posta</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items?.Any() == true)
+            {
+                @foreach (var c in Model.Items)
+                {
+                    <tr>
+                        <td>@c.Name</td>
+                        <td>@c.TaxNumber</td>
+                        <td>@c.Phone</td>
+                        <td>@c.Email</td>
+                    </tr>
+                }
+            }
+            else
             {
                 <tr>
-                    <td>@c.Name</td>
-                    <td>@c.TaxNumber</td>
-                    <td>@c.Phone</td>
-                    <td>@c.Email</td>
+                    <td colspan="4" class="p-0">
+                        <div class="empty-state">Kayıt bulunamadı.</div>
+                    </td>
                 </tr>
             }
-        }
-        else
-        {
-            <tr><td colspan="4" class="text-center text-muted">Kayıt bulunamadı.</td></tr>
-        }
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
 
 @{
     var totalPages = Model.PageSize > 0 ? (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize) : 1;
 }
 @if (totalPages > 1)
 {
-    <nav>
-        <ul class="pagination">
+    <nav class="mt-4" aria-label="Sayfa navigasyonu">
+        <ul class="pagination pagination-modern justify-content-center">
             @for (var i = 1; i <= totalPages; i++)
             {
                 <li class="page-item @(i == Model.Page ? "active" : "")">

@@ -1,0 +1,60 @@
+@model List<CraneManagementSystem.Web.ViewModels.GalleryItemViewModel>
+@{
+    ViewData["Title"] = "Galeri Yönetimi";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Galeri Yönetimi</h2>
+    <a class="btn btn-primary" asp-action="GalleryCreate">Yeni Görsel</a>
+</div>
+<div class="card card-modern">
+    <div class="card-body p-0">
+        @if (Model?.Any() == true)
+        {
+            <div class="table-responsive">
+                <table class="table table-modern mb-0">
+                    <thead>
+                        <tr>
+                            <th>Sıra</th>
+                            <th>Başlık</th>
+                            <th>Görsel</th>
+                            <th>Durum</th>
+                            <th style="width:140px;">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var g in Model.OrderBy(x => x.SortOrder))
+                        {
+                            <tr>
+                                <td>@g.SortOrder</td>
+                                <td>@g.Title</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(g.ImageUrl))
+                                    {
+                                        <img src="@g.ImageUrl" alt="" style="max-height:40px; max-width:80px; object-fit:cover;" />
+                                    }
+                                    else
+                                    { <span class="text-muted">—</span> }
+                                </td>
+                                <td>@(g.IsActive ? "Aktif" : "Pasif")</td>
+                                <td>
+                                    <a class="btn btn-sm btn-outline-primary me-1" asp-action="GalleryEdit" asp-route-id="@g.Id">Düzenle</a>
+                                    <form asp-action="GalleryDelete" asp-route-id="@g.Id" method="post" class="d-inline" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Sil</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state p-5 text-center text-muted">
+                <p class="mb-0">Henüz galeri öğesi yok. Ana sayfa galerisinde görünmesi için ekleyin.</p>
+                <a class="btn btn-primary mt-3" asp-action="GalleryCreate">İlk Görseli Ekle</a>
+            </div>
+        }
+    </div>
+</div>

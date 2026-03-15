@@ -34,6 +34,9 @@ public static class DependencyInjection
         services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
         services.AddScoped<IContactMessageRepository, ContactMessageRepository>();
         services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+        services.AddScoped<ISliderRepository, SliderRepository>();
+        services.AddScoped<IGalleryItemRepository, GalleryItemRepository>();
+        services.AddScoped<IMenuRepository, MenuRepository>();
 
         // Auth & Token & Email
         services.AddScoped<ITokenService, TokenService>();
@@ -60,6 +63,10 @@ public static class DependencyInjection
         services.AddScoped<AnnouncementService>();
         services.AddScoped<ContactService>();
         services.AddScoped<AppointmentService>();
+        services.AddScoped<SliderService>();
+        services.AddScoped<GalleryItemService>();
+        services.AddScoped<IAboutService, AboutService>();
+        services.AddScoped<IMenuService, MenuService>();
 
         return services;
     }

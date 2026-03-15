@@ -1,0 +1,26 @@
+@model CraneManagementSystem.Web.ViewModels.HomePageViewModel
+@{
+    ViewData["Title"] = "Hakkımızda";
+}
+<div class="container py-5">
+    <h1 class="mb-4">Hakkımızda</h1>
+    <div class="row align-items-start">
+        @if (!string.IsNullOrWhiteSpace(Model.AboutImageUrl))
+        {
+            <div class="col-md-4 mb-4 mb-md-0">
+                <img src="@Model.AboutImageUrl" class="img-fluid rounded" alt="Hakkımızda" />
+            </div>
+        }
+        <div class="col">
+            @if (!string.IsNullOrWhiteSpace(Model.AboutContent))
+            {
+                <div class="about-content">@Html.Raw(Model.AboutContent)</div>
+            }
+            else
+            {
+                <p>TORE VINC olarak sepetli vinç, mobil vinç ve kiralama hizmetleri sunmaktayız. Projeleriniz için güvenilir çözüm ortağınız.</p>
+            }
+            <a asp-controller="Home" asp-action="Index" class="btn btn-outline-primary mt-3">← Ana Sayfaya Dön</a>
+        </div>
+    </div>
+</div>

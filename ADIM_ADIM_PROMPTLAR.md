@@ -212,6 +212,50 @@ PLAN.md'deki "Web Tarafı – Ana Sayfa ve Yönetim Paneli" bölümüne göre we
 
 ---
 
+## Adım 12.1 – Web: Modern Tasarım (Tüm Sayfalar)
+
+**Prompt:**
+
+```
+CraneManagementSystem.Web projesinde tüm sayfalar için modern, tutarlı ve responsive bir tasarım uygula. PLAN.md "Web – Modern Tasarım" hedeflerine uy.
+
+Tasarım ilkeleri:
+- Tutarlı renk paleti (birincil, ikincil, arka plan, metin); TORE VINC kurumsal kimliğine uygun, sade ve profesyonel.
+- Tipografi: Okunabilir font ailesi (ör. sistem fontları veya Google Fonts), başlık/gövde hiyerarşisi, uygun satır yüksekliği.
+- Boşluk ve hizalama: Tutarlı padding/margin (örn. 8px grid), container max-width, kart ve form gruplarında düzenli aralıklar.
+- Responsive: Mobil önce; tüm sayfalar küçük ekranda düzgün görünsün (navbar collapse, tablolar yatay kaydırma veya kart görünümü).
+- Erişilebilirlik: Yeterli kontrast, focus stilleri, form etiketleri ve hata mesajları ilişkilendirilmiş olsun.
+- Bileşenler: Butonlar, kartlar, form alanları, tablolar ve uyarılar (alert) proje genelinde aynı stilde.
+
+Kapsanacak sayfalar (hepsini güncelle):
+
+1. Ortak layout’lar
+   - Views/Shared/_Layout.cshtml: Public site header/footer; logo alanı, navigasyon (Ana Sayfa, İletişim, Randevu Al, Yönetim Girişi); footer telif ve linkler; mobil menü.
+   - Views/Shared/_PanelLayout.cshtml: Panel header (sidebar veya üst menü); rol bazlı menü öğeleri; kullanıcı adı ve Çıkış; aktif sayfa vurgusu.
+
+2. Public sayfalar
+   - Views/Home/Index.cshtml: Ana sayfa hero (başlık, alt başlık, CTA butonları); duyurular ve haberler bölümleri kart/ grid yapıda; başarı mesajları (TempData) için alert bileşeni.
+   - Views/Home/Contact.cshtml: İletişim formu; etiketli alanlar, validation mesajları, Gönder/İptal butonları; form kart veya bölüm içinde.
+   - Views/Home/Appointment.cshtml: Randevu formu; tarih seçici, not alanı; aynı form stili ve butonlar.
+   - Views/Home/Privacy.cshtml: Varsa metin içeriği; okunabilir tipografi ve boşluk.
+   - Views/Shared/Error.cshtml: Hata mesajı ve isteğe bağlı RequestId; sade ve anlaşılır görünüm.
+
+3. Hesap
+   - Views/Account/Login.cshtml: Merkezde giriş kartı; e-posta ve şifre alanları, Giriş butonu, “Ana sayfaya dön” linki; mobilde tam genişlik.
+
+4. Yönetim paneli sayfaları
+   - Views/Panel/Index.cshtml: Dashboard; özet kartlar (Firma, Vinç, Şantiye, vb.) grid’de; kartlar gölge/kenarlık ile ayrılsın; sayılar okunaklı.
+   - Views/Panel/Companies.cshtml: Firmalar tablosu (veya mobilde kart listesi); başlıklar ve sayfalama (pagination) stilli; boş durum mesajı.
+
+Stil dosyaları:
+- wwwroot/css/site.css (veya benzeri) içinde: CSS değişkenleri (renkler, boşluk, font), ortak bileşen sınıfları, yardımcı sınıflar.
+- Bootstrap 5 kullanılıyorsa mevcut sınıfları kullan; gerekiyorsa özelleştirme (override) ile markaya uyum sağla. Ek stiller site.css’e eklensin; tüm sayfalar bu stilleri kullansın.
+
+Çıktı: Tüm listelenen view’lar ve _Layout/_PanelLayout güncellenmiş olmalı; site tek bir “modern” görünümde, mobil uyumlu ve tutarlı olmalı.
+```
+
+---
+
 ## Adım 13 (Opsiyonel) – Mobil Uygulama
 
 **Prompt:**
@@ -224,6 +268,233 @@ Yapılacaklar:
 2. Login ekranı: POST /api/auth/login ile giriş, JWT'yi güvenli sakla (SecureStorage). Sonraki isteklerde Authorization: Bearer header ekle.
 3. JWT'deki role claim'ine göre ana menüyü göster (Admin, Muhasebe, Operatör, Firma). Her rol için plandaki mobil özellikler: Operatör → yakıt girişi, bakım, yevmiye/mesai, atandığı vinçler/şantiyeler; Firma → randevu, kendi hakedişleri; Muhasebe → hakediş, yevmiye, mesai, gelir-gider listeleri; Admin → dashboard özeti, onaylar, listeler.
 4. En azından Dashboard (özet), Login ve rol bazlı bir liste ekranı (örn. Operatör için yakıt girişi formu) implemente et.
+```
+
+---
+
+## Adım 14 – Ana Sayfa CMS, Menü Sistemi ve Rol Ekranları
+
+**Prompt:**
+
+```
+PLAN.md'deki "Ana Sayfa İçerikleri (CMS ile yönetilen)", "Yönetim Paneli – Menü ve Rol Bazlı Ekranlar" ve "CMS Tasarımı (Vinç Temalı)" bölümlerine göre uygula.
+
+1) Backend (API + Domain)
+- Gerekli entity'ler: Slider (Title, ShortText, ImageUrl, SortOrder, IsActive, vb.), GalleryItem (Title, ImageUrl, SortOrder, IsActive veya Gallery grup). Hakkımızda için SystemSetting anahtarı (örn. "AboutUs") veya AboutPage entity. Migration ekle.
+- API: GET/POST/PUT/DELETE /api/slider, /api/gallery (veya /api/gallery/items); hakkımızda için GET/PUT sayfa içeriği. Rol: Admin (veya belirlenen roller) CMS endpoint'lerine erişebilsin.
+
+2) Ana sayfa (public)
+- Slider: API'den aktif slider'ları çek; üstte carousel/slider bileşeni (başlık, kısa metin, görsel). Responsive.
+- Haber: Mevcut /api/news veya home özeti; grid/kart listesi.
+- Galeri: API'den galeri öğelerini çek; grid görünüm, isteğe bağlı lightbox.
+- İletişim: Mevcut iletişim formu; adres/telefon/e-posta site ayarlarından veya sabit alanlardan gösterilsin.
+- Hakkımızda: API'den hakkımızda metnini (ve varsa görsel) çek; ana sayfada "Hakkımızda" bölümü veya ayrı sayfa.
+
+3) Yönetim paneli – menü sistemi
+- Rol bazlı menü: JWT'deki role göre sol menü (sidebar) veya üst menü öğelerini filtrele. PLAN.md "7. Yönetim Paneli Modülleri" matrisine göre: Dashboard, Firmalar, Vinçler, Operatörler, Şantiyeler, İş Planlama, Hakediş, Yevmiye, Mesai, Gelir-Gider, Yakıt, Bakım, Raporlar, Kullanıcı Yönetimi (Admin), Sistem Ayarları (Admin). Yetkisiz modül linki gösterilmesin.
+- Tüm roller için ekranlar: Her modül için en az liste (ve yetkiye göre ekleme/düzenleme) sayfası; menüden tıklanınca ilgili ekran açılsın. Yetkisiz URL'de 403 veya login'e yönlendir.
+
+4) CMS ekranları (vinç temalı tasarım)
+- Slider yönetimi: Listele (tablo/kart), sıra, başlık, görsel önizleme, aktif/pasif. Ekle/Düzenle formu (başlık, kısa metin, görsel URL veya yükleme).
+- Haber yönetimi: Mevcut News CRUD'u panelde kullan veya genişlet; listeleme, ekleme, düzenleme.
+- Galeri yönetimi: Listele, sırala, ekle/düzenle (başlık, görsel). Vinç/inşaat temalı sade arayüz.
+- Hakkımızda: Tek sayfa form (metin alanı, isteğe bağlı görsel); kaydetme API'ye bağla.
+- Tasarım: Kurumsal mavi/gri tonları, tutarlı kart ve form stili, vinç/şantiye ile uyumlu görsel dil.
+
+Çıktı: Ana sayfada slider + haber + galeri + iletişim + hakkımızda; panelde rol bazlı menü ve tüm modül ekranları; Admin'de CMS (slider, haber, galeri, hakkımızda) yönetimi; vinç temalı CMS arayüzü.
+```
+
+---
+
+## Adım 15 – Ana Sayfa Yapısı (Public Site Layout)
+
+**Prompt:**
+
+```
+PLAN.md'deki "Ana Sayfa Yapısı (Public Site Layout)" bölümüne göre public ana sayfayı ve site iskeletini uygula. Mevcut CraneManagementSystem.Web ana sayfasını bu yapıya göre güncelle veya yeniden düzenle.
+
+1) HEADER
+- Logo: Sol tarafta site logosu (SiteSetting/SystemSetting’ten LogoUrl veya sabit ~/images/logo.png).
+- Menü: Ana Sayfa, Hizmetler (dropdown veya alt linkler), Hakkımızda, Referanslar, Galeri, Haberler, İletişim. Anchor link (#hizmetler, #hakkimizda vb.) veya ayrı sayfalar.
+- Telefon: Header’da görünür telefon (SiteSetting/ContactPhone).
+- Teklif Al butonu: Sağ üstte veya menü yanında; Randevu/İletişim veya Teklif formu sayfasına yönlendir.
+
+2) SLIDER
+- Slider görselleri, başlık, açıklama (ShortText), buton (CTA). Mevcut Slider entity/API kullan; buton metni ve link alanı varsa kullan, yoksa “Teklif Al” ile randevu/iletişim sayfasına link ver.
+- Carousel responsive; her slaytta: arka plan veya önde görsel, başlık, kısa metin, buton.
+
+3) HİZMETLER
+- Dört blok: Sepetli Vinç, Mobil Vinç, Platform, Kiralama. Kart veya ikonlu bölümler; her biri için başlık ve kısa açıklama. İçerik sabit (view’da) veya SystemSetting/Hizmet entity ile panelden yönetilebilir. İsteğe bağlı “Detay” veya “Teklif Al” linki.
+
+4) HAKKIMIZDA
+- Kısa tanıtım metni (API’den AboutUs’un ilk paragrafı veya özet alanı). “Devamını oku” linki → /Home/About veya #hakkimizda detay sayfası.
+
+5) REFERANSLAR
+- Firma logoları bölümü. Gerekirse Domain’e Referans/PartnerLogo entity (Ad, LogoUrl, SortOrder); API GET /api/referanslar; panelde Admin CRUD. Yoksa SystemSetting ile virgülle ayrılmış logo URL’leri veya JSON. Carousel veya grid; görseller yan yana.
+
+6) GALERİ
+- Proje fotoğrafları; mevcut /api/gallery veya home.GalleryItems. Grid görünüm; tıklanınca lightbox (CSS/JS) ile büyütme.
+
+7) HABERLER / BLOG
+- Firma haberleri; mevcut /api/news veya home.LatestNews. Kart listesi; başlık, özet, tarih, “Devamı” linki (isteğe bağlı /News/Detail/id).
+
+8) İLETİŞİM
+- Harita: Embed (Google Maps iframe veya MapUrl SystemSetting) veya statik harita.
+- Adres, telefon: Site ayarlarından (ContactAddress, ContactPhone, ContactEmail).
+- İletişim formu: Mevcut POST /api/contact; isim, e-posta, konu, mesaj.
+
+9) FOOTER
+- Sosyal medya: Facebook, Instagram, LinkedIn vb. ikonları; URL’ler SystemSetting (SocialFacebook, SocialInstagram, …) veya tek JSON ayarından.
+- Hızlı linkler: Ana Sayfa, Hakkımızda, Hizmetler, Galeri, Haberler, İletişim, Gizlilik (varsa). Telif/metin: “© TORE VINC …”.
+
+Teknoloji: Mevcut MVC View’lar (Razor), _Layout.cshtml, site.css. Responsive; mobilde menü hamburger. Çıktı: PLAN’daki tüm blokların tek sayfada (ve gerekirse Hakkımızda/İletişim ayrı sayfa) yer aldığı, header/footer’ın ortak olduğu public site.
+```
+
+---
+
+## Adım 16 – Vue 3 Admin Panel ve Rol Bazlı Dinamik Menü Sistemi
+
+**Prompt:**
+
+```
+Bir Vinç Yönetim Sistemi için **ASP.NET Core Web API + Vue 3 Admin Panel** mimarisinde çalışan **rol bazlı dinamik menü sistemi** oluştur.
+
+GENEL MİMARİ
+* Backend: ASP.NET Core Web API | Frontend: Vue 3 + Pinia + Vue Router
+* Authentication: JWT | Authorization: RBAC
+* Menü sistemi tamamen veritabanından yönetilmelidir; kullanıcının rolüne göre menüler otomatik oluşmalıdır
+
+VERİTABANI TABLOLARI
+* Users: Id, Name, Surname, Email, Phone, PasswordHash, RoleId, Status, CreatedDate
+* Roles: Id, RoleName, Description
+* Permissions: Id, ModuleName, ActionName (View, Create, Update, Delete, Export)
+* RolePermissions: Id, RoleId, PermissionId
+* Menus: Id, Title, Icon, Route, ParentId, OrderNo, ModuleName, IsActive
+
+MENÜ SİSTEMİ (Ana + alt menüler)
+1. Dashboard → Genel Durum, Günlük İşler
+2. Vinç Yönetimi → Vinç Listesi, Vinç Ekle, Vinç Bakım Takibi, Vinç Kullanım Geçmişi
+3. Operasyon Yönetimi → Kiralama Listesi, Yeni Kiralama, Görev Planlama, Operasyon Takibi
+4. Müşteri Yönetimi → Müşteri Listesi, Müşteri Ekle, Müşteri Projeleri
+5. Teklif Yönetimi → Teklif Listesi, Yeni Teklif, Teklif Onayları
+6. Fatura ve Muhasebe → Fatura Listesi, Gelirler, Giderler
+7. Bakım Yönetimi → Bakım Planı, Arıza Kayıtları, Servis Geçmişi
+8. Operatör Yönetimi → Operatör Listesi, Operatör Ekle, Operatör Görevleri
+9. Raporlama → Vinç Kullanım Raporu, Kiralama Raporu, Gelir Raporu, Operatör Performans Raporu
+10. CMS Yönetimi → Slider, Haber, Galeri, Hizmetler, Referanslar, Sayfalar, İletişim Bilgileri
+11. Sistem Yönetimi → Kullanıcı Yönetimi, Rol Yönetimi, Yetki Yönetimi, Menü Yönetimi, Log Kayıtları
+12. Ayarlar → Genel Ayarlar, SMS Ayarları, Email Ayarları, API Ayarları
+
+MENÜ ÖZELLİKLERİ
+* ParentId ile hiyerarşik yapı; OrderNo ile sıralama; ikonlar sidebar'da
+* Girişte API'den menüler çekilsin; Vue'da router dinamik oluşturulsun; rolüne göre yetkisiz menüler gizlensin
+
+API ENDPOINTLERİ
+* GET /api/menu/user → Rolüne göre menüler | GET /api/menu → Tüm menüler (Admin)
+* POST /api/menu | PUT /api/menu/{id} | DELETE /api/menu/{id}
+
+FRONTEND (Vue 3)
+* SidebarMenu component; menüleri recursive göster; router guard ile yetkisiz sayfa engeli
+* Menü ikonları: FontAwesome veya Material Icons | Pinia: auth + menu state
+
+EKSTRA
+* Menü tamamen dinamik; yeni modül menüden eklenebilmeli
+* Admin panelinde menü yönetim ekranı; sürükle bırak ile sıralama (OrderNo güncelleme)
+* Modüler, genişletilebilir, kurumsal seviyede sistem.
+```
+
+---
+
+## Adım 17 – Vue 3 Admin Panel İç Sayfalarının İmplementasyonu
+
+**Prompt:**
+
+```
+admin-vue projesinde şu an çoğu rota Placeholder.vue ile "Bu sayfa henüz implemente edilmedi" gösteriyor. Bu sayfaları, mevcut CraneManagementSystem.API endpoint'leriyle entegre ederek implemente et.
+
+HEDEF
+* Placeholder kullanan tüm rotalar için gerçek liste/form/rapor sayfaları yaz.
+* API: src/CraneManagementSystem.API içindeki controller'lar (api/cranes, api/companies, api/work-plans, api/dashboard, api/news, api/sliders, api/gallery, api/users, api/menu, api/systemsettings, api/incomeexpense, api/maintenance, api/reports vb.) kullanılacak.
+* Tasarım: Mevcut AdminLayout, Dashboard ve Login ile uyumlu; aynı renk paleti (örn. #111827, #374151, #6b7280, #dbeafe, #2563eb), kart yapısı ve buton stilleri.
+
+ORTAK BİLEŞENLER (önce oluştur)
+* DataTable: Tablo + sayfalama (page, pageSize) + sıralama (opsiyonel) + boş durum mesajı. Slot ile özel hücre desteği.
+* FormCard: Başlık + form alanları + Kaydet / İptal butonları; loading ve hata mesajı alanı.
+* PageHeader: Sayfa başlığı + isteğe bağlı "Yeni Ekle" veya aksiyon butonu.
+* LoadingSpinner ve EmptyState (liste boşken) bileşenleri.
+
+SAYFA GRUPLARI VE API EŞLEŞMESİ
+
+1) Dashboard (zaten var; gerekirse genişlet)
+* /dashboard, /dashboard/overview, /dashboard/daily → GET /api/dashboard/summary (veya ilgili endpoint). Özet kartlar (firma sayısı, vinç sayısı, vb.) ve günlük işler listesi.
+
+2) Vinç Yönetimi
+* /cranes → GET /api/cranes (sayfalı liste). Kolonlar: Kod, Ad, Tip, Konum, Durum, Atanan Operatör; Düzenle/Sil aksiyonları.
+* /cranes/new → POST /api/cranes (form: Code, Name, Type, Location, Status, ConstructionSiteId, AssignedOperatorId).
+* /cranes/maintenance → GET /api/maintenance (bakım kayıtları listesi).
+* /cranes/history → Vinç kullanım/atama geçmişi (work-plans veya ilgili API ile).
+
+3) Operasyon / Kiralama / İş Planı
+* /operations/rentals, /operations/rentals/new → İş planı veya kiralama ile ilişkili (GET/POST /api/work-plans, /api/companies).
+* /work-plans → GET /api/work-plans (sayfalı). Plan listesi + yeni plan formu veya ayrı sayfa.
+* /operations/tracking → İş planı durumları veya operasyon takip listesi.
+
+4) Müşteri (Firma) Yönetimi
+* /companies → GET /api/companies (sayfalı liste). Kolonlar: Ad, Vergi No, İletişim; Düzenle/Sil.
+* /companies/new → POST /api/companies (form: Name, TaxNumber, Address, Phone, Email).
+* /companies/projects → Firma–proje ilişkisi (work-plans veya construction-sites ile; GET /api/construction-sites, /api/work-plans).
+
+5) Teklif Yönetimi
+* /quotes, /quotes/new, /quotes/approvals → Backend'de teklif endpoint'i yoksa "Yakında" bilgisi veya work-plans/progress-payments ile basit bir liste; varsa GET/POST ilgili API.
+
+6) Fatura ve Muhasebe
+* /finance/invoices → Hakediş/fatura benzeri (GET /api/progresspayments veya ilgili endpoint).
+* /income-expense → GET /api/incomeexpense (sayfalı; gelir/gider filtre). Liste + isteğe bağlı ekleme formu.
+
+7) Bakım Yönetimi
+* /maintenance/plan, /maintenance/records → GET /api/maintenance (kayıt listesi; plan için aynı veya filtre).
+* /maintenance/history → GET /api/maintenance (geçmiş listesi).
+
+8) Operatör Yönetimi
+* /operators → GET /api/users (rol veya tip filtre ile operatörler). Liste + düzenleme linki.
+* /operators/new → POST /api/auth/register veya kullanıcı ekleme endpoint'i (varsa).
+* /operators/assignments → GET /api/operatorassignments (veya atama listesi endpoint'i).
+
+9) Raporlama
+* /reports/crane-usage, /reports/rentals, /reports/income, /reports/operator → GET /api/reports (veya ilgili rapor endpoint'leri). Tarih aralığı filtresi + tablo/özet gösterimi; export (CSV/Excel) varsa buton.
+
+10) CMS Yönetimi
+* /cms/sliders → GET/POST/PUT/DELETE /api/sliders. Liste + ekleme/düzenleme formu (Title, ShortText, ImageUrl, SortOrder, IsActive).
+* /cms/news → GET/POST/PUT/DELETE /api/news. Liste + form (Title, Summary, Body, ImageUrl, IsPublished, PublishedAt).
+* /cms/gallery → GET/POST/PUT/DELETE /api/gallery. Liste + form (Title, ImageUrl, SortOrder, IsActive).
+* /cms/services, /cms/references, /cms/pages → SystemSetting veya özel endpoint varsa kullan; yoksa "Yakında" veya basit anahtar-değer formu.
+* /cms/contact → GET/PUT /api/about veya iletişim ayarları (system settings) formu.
+
+11) Sistem Yönetimi
+* /users → GET/POST/PUT/DELETE /api/users (Admin). Kullanıcı listesi + rol atama.
+* /system/roles → Rol listesi (GET /api/menu veya Roles tablosu için endpoint yoksa "Yakında").
+* /system/permissions → Yetki listesi (backend'de endpoint yoksa "Yakında").
+* /system/menus → GET /api/menu (tüm menü ağacı) + düzenleme (PUT /api/menu/{id}), sıra (PUT /api/menu/{id}/reorder), yeni menü (POST /api/menu). Ağaç görünümü veya liste + ParentId/OrderNo düzenleme.
+* /system/logs → Backend'de log endpoint'i yoksa "Yakında".
+
+12) Ayarlar
+* /settings/general, /settings/sms, /settings/email, /settings/api → GET/PUT /api/systemsettings (Key-Value). Her sayfa ilgili anahtar(lar) için form (örn. Genel Ayarlar: SiteAdi, LogoUrl; Email: SmtpHost, FromAddress).
+
+TEKNİK KURALLAR
+* Proje: admin-vue (Vue 3 + Vite + Pinia + Vue Router). API client: src/api/client.js (axios, baseURL = VITE_API_URL).
+* Sayfa bileşenleri: src/views/ altında mantıksal gruplara göre (örn. cranes/CraneList.vue, cranes/CraneForm.vue; companies/CompanyList.vue; cms/SliderList.vue).
+* Router: Mevcut router/index.js'teki path'ler aynı kalsın; sadece component import'ları yeni view'lara yönlendirilsin.
+* Liste sayfalarında sayfalama: page, pageSize query veya state ile API'ye iletilmeli (API'de varsa).
+* Form validasyonu: Basit required/format kontrolü; hata mesajları form altında veya alan yanında gösterilsin.
+* 403/401: API hata dönerse kullanıcıyı login'e yönlendir veya "Yetkiniz yok" mesajı göster (api client'ta interceptor zaten 401'de login'e atıyor olabilir).
+
+ÖNCELİK (istersen aşamalı uygula)
+* Faz 1: Dashboard (genişlet), Vinç listesi/form, Firma listesi/form, Kullanıcı listesi, Menü yönetimi.
+* Faz 2: İş planları, Gelir-gider, Bakım kayıtları, Operatör listesi/atamalar.
+* Faz 3: CMS (Slider, Haber, Galeri), Raporlar, Ayarlar.
+* Faz 4: Teklif, Fatura, Rol/Yetki, Log (veya "Yakında" sayfaları).
+
+Çıktı: Placeholder.vue kullanan rotaların tamamı (veya belirlenen fazlar) gerçek içerikle çalışır; liste/form/rapor sayfaları ilgili API'lerle entegre; tasarım mevcut panel ile uyumlu.
 ```
 
 ---

@@ -3,75 +3,292 @@
     ViewData["Title"] = "Ana Sayfa";
 }
 
-<div class="text-center py-4">
-    <h1 class="display-4">@(Model.HeroTitle ?? "TORE VINC")</h1>
-    <p class="lead">@(Model.HeroSubtitle ?? "Vinç Yönetim Sistemi")</p>
-    <p>
-        <a class="btn btn-primary me-2" asp-action="Contact">İletişim</a>
-        <a class="btn btn-outline-primary me-2" asp-action="Appointment">Randevu Al</a>
-        <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Login">Yönetim Girişi</a>
-    </p>
-</div>
-
 @if (TempData["ContactSuccess"] as bool? == true)
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Mesajınız alındı. En kısa sürede size dönüş yapacağız.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="container pt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Mesajınız alındı. En kısa sürede size dönüş yapacağız.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
     </div>
 }
 @if (TempData["AppointmentSuccess"] as bool? == true)
 {
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        Randevu talebiniz alındı.
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    <div class="container pt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            Randevu talebiniz alındı.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Kapat"></button>
+        </div>
     </div>
 }
 
-@if (Model.PinnedAnnouncements?.Any() == true)
+@* SLIDER *@
+@if (Model.Sliders?.Any() == true)
 {
-    <section class="my-4">
-        <h2>Duyurular</h2>
-        <div class="list-group">
-            @foreach (var a in Model.PinnedAnnouncements.Take(5))
+    <section class="home-slider mb-0">
+        <div id="mainCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-indicators">
+                @for (var i = 0; i < Model.Sliders.Count; i++)
+                {
+                    <button type="button" data-bs-target="#mainCarousel" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-label="Slide @(i+1)"></button>
+                }
+            </div>
+            <div class="carousel-inner">
+                @for (var i = 0; i < Model.Sliders.Count; i++)
+                {
+                    var s = Model.Sliders[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        @if (!string.IsNullOrEmpty(s.ImageUrl))
+                        {
+                            <img src="@s.ImageUrl" class="d-block w-100 slider-img" alt="@s.Title" />
+                        }
+                        <div class="carousel-caption carousel-caption-modern">
+                            <h2>@s.Title</h2>
+                            @if (!string.IsNullOrEmpty(s.ShortText))
+                            {
+                                <p class="slider-text">@s.ShortText</p>
+                            }
+                            <a class="btn btn-primary btn-lg mt-2" asp-controller="Home" asp-action="Appointment">Teklif Al</a>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#mainCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Önceki</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#mainCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Sonraki</span>
+            </button>
+        </div>
+    </section>
+}
+else
+{
+    <section class="hero-section hero-compact py-5">
+        <h1 class="hero-title">@(Model.HeroTitle ?? "TORE VINC")</h1>
+        <p class="hero-subtitle">@(Model.HeroSubtitle ?? "Vinç Yönetim Sistemi")</p>
+        <a class="btn btn-primary btn-lg" asp-controller="Home" asp-action="Appointment">Teklif Al</a>
+    </section>
+}
+
+@* HİZMETLER *@
+<section id="hizmetler" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Hizmetlerimiz</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 hizmet-card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Sepetli Vinç</h5>
+                        <p class="card-text small text-muted">Profesyonel sepetli vinç hizmeti ile yüksek noktalara güvenli erişim.</p>
+                        <a asp-controller="Home" asp-action="Appointment" class="btn btn-outline-primary btn-sm">Teklif Al</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 hizmet-card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Mobil Vinç</h5>
+                        <p class="card-text small text-muted">Mobil vinç kiralama ve taşıma çözümleri.</p>
+                        <a asp-controller="Home" asp-action="Appointment" class="btn btn-outline-primary btn-sm">Teklif Al</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 hizmet-card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Platform</h5>
+                        <p class="card-text small text-muted">İş platformu ve yükseltici ekipman hizmetleri.</p>
+                        <a asp-controller="Home" asp-action="Appointment" class="btn btn-outline-primary btn-sm">Teklif Al</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 hizmet-card">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Kiralama</h5>
+                        <p class="card-text small text-muted">Vinç ve ekipman kiralama, proje bazlı çözümler.</p>
+                        <a asp-controller="Home" asp-action="Appointment" class="btn btn-outline-primary btn-sm">Teklif Al</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@* HAKKIMIZDA *@
+<section id="hakkimizda" class="py-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">Hakkımızda</h2>
+        <div class="row align-items-center">
+            @if (!string.IsNullOrWhiteSpace(Model.AboutImageUrl))
             {
-                <div class="list-group-item">
-                    <h5 class="mb-1">@a.Title</h5>
-                    @if (!string.IsNullOrEmpty(a.Content))
-                    {
-                        <p class="mb-0 text-muted small">@(a.Content.Length > 200 ? a.Content.Substring(0, 200) + "..." : a.Content)</p>
-                    }
-                    <small class="text-muted">@a.StartDate.ToString("d")</small>
+                <div class="col-md-4 mb-4 mb-md-0">
+                    <img src="@Model.AboutImageUrl" class="img-fluid rounded about-img" alt="Hakkımızda" />
                 </div>
             }
+            <div class="col">
+                @if (!string.IsNullOrWhiteSpace(Model.AboutContent))
+                {
+                    var shortAbout = Model.AboutContent.Length > 400 ? Model.AboutContent.Substring(0, 400) + "..." : Model.AboutContent;
+                    <div class="about-content">@Html.Raw(shortAbout)</div>
+                    if (Model.AboutContent.Length > 400)
+                    {
+                        <a asp-controller="Home" asp-action="About" class="btn btn-link px-0">Devamını oku &rarr;</a>
+                    }
+                }
+                else
+                {
+                    <p class="text-muted">TORE VINC olarak sepetli vinç, mobil vinç ve kiralama hizmetleri sunmaktayız. Projeleriniz için güvenilir çözüm ortağınız.</p>
+                    <a asp-controller="Home" asp-action="About" class="btn btn-link px-0">Devamını oku &rarr;</a>
+                }
+            </div>
+        </div>
+    </div>
+</section>
+
+@* REFERANSLAR *@
+@if (Model.ReferansLogos?.Any() == true)
+{
+    <section id="referanslar" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center mb-4">Referanslarımız</h2>
+            <div class="row align-items-center justify-content-center g-4 referans-logos">
+                @foreach (var logoUrl in Model.ReferansLogos.Take(12))
+                {
+                    <div class="col-6 col-md-4 col-lg-2 text-center">
+                        <img src="@logoUrl" alt="Referans" class="img-fluid referans-logo" loading="lazy" />
+                    </div>
+                }
+            </div>
         </div>
     </section>
 }
 
+@* GALERİ *@
+@if (Model.GalleryItems?.Any() == true)
+{
+    <section id="galeri" class="py-5">
+        <div class="container">
+            <h2 class="section-title text-center mb-4">Galeri</h2>
+            <div class="row g-3 gallery-grid">
+                @foreach (var g in Model.GalleryItems.Take(12))
+                {
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="card gallery-card h-100">
+                            @if (!string.IsNullOrEmpty(g.ImageUrl))
+                            {
+                                <a href="@g.ImageUrl" data-bs-toggle="modal" data-bs-target="#galleryModal" data-gallery-src="@g.ImageUrl" data-gallery-title="@g.Title" class="gallery-link">
+                                    <img src="@g.ImageUrl" class="card-img-top gallery-img" alt="@g.Title" loading="lazy" />
+                                </a>
+                            }
+                            <div class="card-body py-2">
+                                <p class="card-text small mb-0">@g.Title</p>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+    <div class="modal fade" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header border-0">
+                    <h5 class="modal-title" id="galleryModalLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+                </div>
+                <div class="modal-body p-0 text-center">
+                    <img id="galleryModalImg" src="" alt="" class="img-fluid" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* HABERLER / BLOG *@
 @if (Model.LatestNews?.Any() == true)
 {
-    <section class="my-4">
-        <h2>Son Haberler</h2>
-        <div class="row">
-            @foreach (var n in Model.LatestNews.Take(6))
-            {
-                <div class="col-md-4 mb-3">
-                    <div class="card h-100">
-                        @if (!string.IsNullOrEmpty(n.ImageUrl))
-                        {
-                            <img src="@n.ImageUrl" class="card-img-top" alt="@n.Title" style="height:140px;object-fit:cover;" />
-                        }
-                        <div class="card-body">
-                            <h5 class="card-title">@n.Title</h5>
-                            <p class="card-text small">@(n.Summary ?? "")</p>
-                            @if (n.PublishedAt.HasValue)
+    <section id="haberler" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="section-title text-center mb-4">Haberler / Blog</h2>
+            <div class="row">
+                @foreach (var n in Model.LatestNews.Take(6))
+                {
+                    <div class="col-12 col-md-6 col-lg-4 mb-4">
+                        <div class="card news-card h-100">
+                            @if (!string.IsNullOrEmpty(n.ImageUrl))
                             {
-                                <small class="text-muted">@n.PublishedAt.Value.ToString("d")</small>
+                                <img src="@n.ImageUrl" class="news-img card-img-top" alt="@n.Title" />
                             }
+                            <div class="card-body">
+                                <h5 class="card-title">@n.Title</h5>
+                                <p class="card-text">@(n.Summary ?? "")</p>
+                                @if (n.PublishedAt.HasValue)
+                                {
+                                    <small class="text-muted">@n.PublishedAt.Value.ToString("d")</small>
+                                }
+                            </div>
                         </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </section>
+}
+
+@* İLETİŞİM *@
+<section id="iletisim" class="py-5">
+    <div class="container">
+        <h2 class="section-title text-center mb-4">İletişim</h2>
+        <div class="row">
+            @if (!string.IsNullOrWhiteSpace(Model.MapEmbedUrl))
+            {
+                <div class="col-lg-6 mb-4">
+                    <div class="ratio ratio-16x9 rounded overflow-hidden">
+                        @Html.Raw(Model.MapEmbedUrl)
                     </div>
                 </div>
             }
+            <div class="col-lg-@(string.IsNullOrWhiteSpace(Model.MapEmbedUrl) ? "12" : "6")">
+                @if (!string.IsNullOrWhiteSpace(Model.ContactAddress) || !string.IsNullOrWhiteSpace(Model.ContactPhone) || !string.IsNullOrWhiteSpace(Model.ContactEmail))
+                {
+                    <div class="mb-4">
+                        @if (!string.IsNullOrWhiteSpace(Model.ContactAddress))
+                        {
+                            <p class="mb-2"><strong>Adres:</strong><br />@Model.ContactAddress</p>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.ContactPhone))
+                        {
+                            <p class="mb-2"><strong>Telefon:</strong><br /><a href="tel:@Model.ContactPhone">@Model.ContactPhone</a></p>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(Model.ContactEmail))
+                        {
+                            <p class="mb-2"><strong>E-posta:</strong><br /><a href="mailto:@Model.ContactEmail">@Model.ContactEmail</a></p>
+                        }
+                    </div>
+                }
+                <h5 class="mb-3">İletişim Formu</h5>
+                <partial name="_ContactForm" model="new CraneManagementSystem.Web.ViewModels.ContactFormViewModel()" />
+            </div>
         </div>
-    </section>
+    </div>
+</section>
+
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script>
+document.querySelectorAll('.gallery-link').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+        e.preventDefault();
+        var src = this.dataset.gallerySrc;
+        var title = this.dataset.galleryTitle;
+        document.getElementById('galleryModalImg').src = src;
+        document.getElementById('galleryModalImg').alt = title;
+        document.getElementById('galleryModalLabel').textContent = title || '';
+    });
+});
+</script>
 }

@@ -1,0 +1,42 @@
+@model CraneManagementSystem.Web.ViewModels.HomePageViewModel
+<header class="site-header">
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" asp-controller="Home" asp-action="Index">
+                @if (!string.IsNullOrEmpty(Model?.LogoUrl))
+                {
+                    <img src="@Model.LogoUrl" alt="TORE VINC" class="site-logo me-2" />
+                }
+                <span>TORE VINC</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain" aria-controls="navbarMain" aria-expanded="false" aria-label="Menüyü aç">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Ana Sayfa</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#hizmetler">Hizmetler</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#hakkimizda">Hakkımızda</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#referanslar">Referanslar</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#galeri">Galeri</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#haberler">Haberler</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#iletisim">İletişim</a></li>
+                </ul>
+                <ul class="navbar-nav">
+                    @if (!string.IsNullOrEmpty(Model?.ContactPhone))
+                    {
+                        <li class="nav-item align-self-center me-3">
+                            <a class="nav-link nav-phone" href="tel:@Model.ContactPhone">@Model.ContactPhone</a>
+                        </li>
+                    }
+                    <li class="nav-item">
+                        <a class="btn btn-teklif btn-sm" asp-controller="Home" asp-action="Appointment">Teklif Al</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Account" asp-action="Login">Yönetim Girişi</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>

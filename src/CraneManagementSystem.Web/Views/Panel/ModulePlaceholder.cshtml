@@ -1,0 +1,10 @@
+@model string
+@{
+    ViewData["Title"] = Model ?? "Modül";
+}
+<div class="card card-modern">
+    <div class="card-body">
+        <h5 class="card-title">@(Model ?? "Modül")</h5>
+        <p class="text-muted mb-0">Bu modülün listeleme ve yönetim ekranları API entegrasyonu ile eklenecektir. Yetkiniz bulunmaktadır.</p>
+    </div>
+</div>

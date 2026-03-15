@@ -1,0 +1,22 @@
+@model CraneManagementSystem.Web.ViewModels.AboutEditViewModel
+@{
+    ViewData["Title"] = "Hakkımızda";
+}
+<h2 class="mb-4">Hakkımızda İçeriği</h2>
+<div class="card form-card">
+    <div class="card-body">
+        <form asp-action="About" method="post">
+            @Html.AntiForgeryToken()
+            <div class="mb-3">
+                <label asp-for="Content" class="form-label">Metin (HTML kullanabilirsiniz)</label>
+                <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">Görsel URL</label>
+                <input asp-for="ImageUrl" class="form-control" />
+            </div>
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </form>
+    </div>
+</div>
