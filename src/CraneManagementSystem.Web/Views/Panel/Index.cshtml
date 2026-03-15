@@ -1,0 +1,84 @@
+@model CraneManagementSystem.Web.ViewModels.DashboardSummaryViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_PanelLayout.cshtml";
+}
+
+<h1 class="mb-4">Dashboard</h1>
+
+<div class="row">
+    <div class="col-md-2 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Firmalar</h6>
+                <p class="card-text display-6">@Model.TotalCompanies</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Vinçler</h6>
+                <p class="card-text display-6">@Model.TotalCranes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Aktif Vinç</h6>
+                <p class="card-text display-6">@Model.ActiveCranes</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Şantiyeler</h6>
+                <p class="card-text display-6">@Model.TotalConstructionSites</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Operatörler</h6>
+                <p class="card-text display-6">@Model.TotalOperators</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Bekleyen Randevu</h6>
+                <p class="card-text display-6">@Model.PendingAppointments</p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bu Ay Gelir</h5>
+                <p class="card-text display-6">@Model.TotalIncomeThisMonth.ToString("N2") ₺</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bu Ay Gider</h5>
+                <p class="card-text display-6">@Model.TotalExpenseThisMonth.ToString("N2") ₺</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Okunmamış İletişim</h5>
+                <p class="card-text display-6">@Model.UnreadContactMessages</p>
+            </div>
+        </div>
+    </div>
+</div>

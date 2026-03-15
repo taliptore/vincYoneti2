@@ -102,7 +102,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGet("/", () => Results.Ok(new { message = "Crane Management System API", version = "1" }));
+// Ana sayfa: Swagger'a yönlendir (tarayıcıda sistemi kullanmak için)
+app.MapGet("/", () => Results.Redirect("/swagger", permanent: false));
 
 app.Run();
 

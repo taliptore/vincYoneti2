@@ -1,6 +1,6 @@
 # TORE VINC – Vinç Yönetim Sistemi | Backend + Panel + Mobil Planı
 
-Bu sistem **TORE VINC** firması için geliştirilir ve firmaya aittir. **Web API backend** (tek kaynak), **yönetim paneli** (web), **mobil uygulama** (iOS/Android).
+Bu sistem **TORE VINC** firması için geliştirilir ve firmaya aittir. **Web API backend** (tek kaynak), **web tarafı** (ana sayfa + yönetim paneli), **mobil uygulama** (iOS/Android).
 
 ## Mimari Özet
 
@@ -20,6 +20,15 @@ Bu sistem **TORE VINC** firması için geliştirilir ve firmaya aittir. **Web AP
 ## 3–6. Application, Persistence, Infrastructure, API
 
 Detaylı DTO, Repository, Service, Controller listesi ve rol bazlı yetkilendirme planın tam sürümünde yer alır.
+
+## Web Tarafı – Ana Sayfa ve Yönetim Paneli
+
+- **Tek kaynak:** Mevcut CraneManagementSystem.API kullanılır; ayrı backend yok.
+- **İki ayrı arayüz:**
+  1. **Ana sayfa (public):** Ziyaretçiye açık landing sayfası. Haberler, duyurular, iletişim formu, randevu talebi. API: `/api/home`, `/api/news`, `/api/announcements`, `/api/contact`, `/api/appointments` (POST randevu).
+  2. **Yönetim paneli:** Giriş (JWT) sonrası rol bazlı arayüz. Dashboard, firmalar, vinçler, operatörler, şantiyeler, iş planlama, hakediş, yevmiye, mesai, gelir-gider, yakıt, bakım, raporlar, kullanıcı yönetimi, sistem ayarları. Yetkiler “7. Yönetim Paneli Modülleri” rol matrisine göre.
+- **Teknoloji seçenekleri:** ASP.NET Core MVC / Razor Pages (sunucu taraflı) veya SPA (React, Vue, Blazor) ayrı proje; API Base URL ayarlanabilir.
+- **Konum:** `src/CraneManagementSystem.Web` veya `src/ToreVinc.Web`; solution’a eklenir. Geliştirme ortamında API (örn. `http://localhost:5116`) ile aynı veya farklı portta çalışır.
 
 ## Mobil Uygulama
 

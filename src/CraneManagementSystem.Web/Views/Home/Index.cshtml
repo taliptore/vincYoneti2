@@ -1,0 +1,77 @@
+@model CraneManagementSystem.Web.ViewModels.HomePageViewModel
+@{
+    ViewData["Title"] = "Ana Sayfa";
+}
+
+<div class="text-center py-4">
+    <h1 class="display-4">@(Model.HeroTitle ?? "TORE VINC")</h1>
+    <p class="lead">@(Model.HeroSubtitle ?? "Vinç Yönetim Sistemi")</p>
+    <p>
+        <a class="btn btn-primary me-2" asp-action="Contact">İletişim</a>
+        <a class="btn btn-outline-primary me-2" asp-action="Appointment">Randevu Al</a>
+        <a class="btn btn-outline-secondary" asp-controller="Account" asp-action="Login">Yönetim Girişi</a>
+    </p>
+</div>
+
+@if (TempData["ContactSuccess"] as bool? == true)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Mesajınız alındı. En kısa sürede size dönüş yapacağız.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["AppointmentSuccess"] as bool? == true)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Randevu talebiniz alındı.
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (Model.PinnedAnnouncements?.Any() == true)
+{
+    <section class="my-4">
+        <h2>Duyurular</h2>
+        <div class="list-group">
+            @foreach (var a in Model.PinnedAnnouncements.Take(5))
+            {
+                <div class="list-group-item">
+                    <h5 class="mb-1">@a.Title</h5>
+                    @if (!string.IsNullOrEmpty(a.Content))
+                    {
+                        <p class="mb-0 text-muted small">@(a.Content.Length > 200 ? a.Content.Substring(0, 200) + "..." : a.Content)</p>
+                    }
+                    <small class="text-muted">@a.StartDate.ToString("d")</small>
+                </div>
+            }
+        </div>
+    </section>
+}
+
+@if (Model.LatestNews?.Any() == true)
+{
+    <section class="my-4">
+        <h2>Son Haberler</h2>
+        <div class="row">
+            @foreach (var n in Model.LatestNews.Take(6))
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card h-100">
+                        @if (!string.IsNullOrEmpty(n.ImageUrl))
+                        {
+                            <img src="@n.ImageUrl" class="card-img-top" alt="@n.Title" style="height:140px;object-fit:cover;" />
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@n.Title</h5>
+                            <p class="card-text small">@(n.Summary ?? "")</p>
+                            @if (n.PublishedAt.HasValue)
+                            {
+                                <small class="text-muted">@n.PublishedAt.Value.ToString("d")</small>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}

@@ -194,7 +194,25 @@ Projeyi doğrula: API'yi çalıştır, Swagger'dan login endpoint'ini test et (s
 
 ---
 
-## Adım 12 (Opsiyonel) – Mobil Uygulama
+## Adım 12 – Web Tarafı: Ana Sayfa ve Yönetim Paneli
+
+**Prompt:**
+
+```
+PLAN.md'deki "Web Tarafı – Ana Sayfa ve Yönetim Paneli" bölümüne göre web arayüzünü ekle.
+
+1. Yeni proje: src/CraneManagementSystem.Web (ASP.NET Core MVC veya Razor Pages) veya SPA (React/Vue/Blazor). Solution'a ekle. API Base URL (örn. http://localhost:5116) ayarlanabilir olsun.
+
+2. Ana sayfa (public): Ziyaretçiye açık landing. API'den haberler (GET /api/news), duyurular (GET /api/announcements), ana sayfa özeti (GET /api/home). İletişim formu → POST /api/contact. Randevu talebi → POST /api/appointments. Giriş yapmadan erişilebilir.
+
+3. Yönetim paneli: Login sayfası → POST /api/auth/login, JWT sakla (cookie veya session/localStorage). Giriş sonrası rol bazlı menü (Admin, Muhasebe, Operatör, Firma). PLAN.md "7. Yönetim Paneli Modülleri" rol matrisine göre: Dashboard, Firmalar, Vinçler, Operatörler, Şantiyeler, İş Planlama, Hakediş, Yevmiye, Mesai, Gelir-Gider, Yakıt, Bakım, Raporlar, Kullanıcı Yönetimi (Admin), Sistem Ayarları (Admin). Her sayfada ilgili API endpoint'lerini kullan (sayfalama, filtreleme). Yetkisiz sayfaya erişimde 403 veya login'e yönlendir.
+
+4. En azından ana sayfa (haber/duyuru listesi, iletişim formu), login ve Dashboard (GET /api/dashboard/summary) ile bir yönetim listesi (örn. Firmalar) implemente et.
+```
+
+---
+
+## Adım 13 (Opsiyonel) – Mobil Uygulama
 
 **Prompt:**
 
