@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CEF855DA-3F58-4B42-8899-CBBB0DA29D29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraneManagementSystem.Domain", "src\CraneManagementSystem.Domain\CraneManagementSystem.Domain.csproj", "{13B89608-853F-4612-ADD7-BB3362AB1651}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraneManagementSystem.Application", "src\CraneManagementSystem.Application\CraneManagementSystem.Application.csproj", "{7136843D-B9D2-4838-88D5-1D46B66DBCF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraneManagementSystem.Persistence", "src\CraneManagementSystem.Persistence\CraneManagementSystem.Persistence.csproj", "{1DB60E1F-2A6D-41E2-8F79-E1B09ACE5436}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraneManagementSystem.Infrastructure", "src\CraneManagementSystem.Infrastructure\CraneManagementSystem.Infrastructure.csproj", "{70C5F9AC-9007-41AC-9707-155E6572BA85}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CraneManagementSystem.API", "src\CraneManagementSystem.API\CraneManagementSystem.API.csproj", "{37572D79-3869-4E86-BC2F-AD4F120C7554}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{13B89608-853F-4612-ADD7-BB3362AB1651}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13B89608-853F-4612-ADD7-BB3362AB1651}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13B89608-853F-4612-ADD7-BB3362AB1651}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{13B89608-853F-4612-ADD7-BB3362AB1651}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7136843D-B9D2-4838-88D5-1D46B66DBCF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7136843D-B9D2-4838-88D5-1D46B66DBCF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7136843D-B9D2-4838-88D5-1D46B66DBCF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7136843D-B9D2-4838-88D5-1D46B66DBCF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1DB60E1F-2A6D-41E2-8F79-E1B09ACE5436}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DB60E1F-2A6D-41E2-8F79-E1B09ACE5436}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DB60E1F-2A6D-41E2-8F79-E1B09ACE5436}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DB60E1F-2A6D-41E2-8F79-E1B09ACE5436}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70C5F9AC-9007-41AC-9707-155E6572BA85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70C5F9AC-9007-41AC-9707-155E6572BA85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70C5F9AC-9007-41AC-9707-155E6572BA85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70C5F9AC-9007-41AC-9707-155E6572BA85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37572D79-3869-4E86-BC2F-AD4F120C7554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37572D79-3869-4E86-BC2F-AD4F120C7554}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37572D79-3869-4E86-BC2F-AD4F120C7554}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37572D79-3869-4E86-BC2F-AD4F120C7554}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{13B89608-853F-4612-ADD7-BB3362AB1651} = {CEF855DA-3F58-4B42-8899-CBBB0DA29D29}
+		{7136843D-B9D2-4838-88D5-1D46B66DBCF0} = {CEF855DA-3F58-4B42-8899-CBBB0DA29D29}
+		{1DB60E1F-2A6D-41E2-8F79-E1B09ACE5436} = {CEF855DA-3F58-4B42-8899-CBBB0DA29D29}
+		{70C5F9AC-9007-41AC-9707-155E6572BA85} = {CEF855DA-3F58-4B42-8899-CBBB0DA29D29}
+		{37572D79-3869-4E86-BC2F-AD4F120C7554} = {CEF855DA-3F58-4B42-8899-CBBB0DA29D29}
+	EndGlobalSection
+EndGlobal
