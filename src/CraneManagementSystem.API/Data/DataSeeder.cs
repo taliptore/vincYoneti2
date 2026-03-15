@@ -221,4 +221,153 @@ public static class DataSeeder
         await db.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Seed menüler ve Admin rol atamaları oluşturuldu.");
     }
+
+    /// <summary>Örnek senaryo verileri: Firma, Şantiye, Vinç, İş planı, Gelir-gider, Bakım, Hakediş, Slider, Haber, Galeri, Ayarlar.</summary>
+    public static async Task EnsureSampleDataAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
+        if (await db.Companies.AnyAsync(cancellationToken) && await db.Cranes.AnyAsync(cancellationToken))
+        {
+            logger.LogDebug("Örnek veri zaten mevcut; sample data seed atlanıyor.");
+            return;
+        }
+
+        var now = DateTime.UtcNow;
+
+        var companies = await db.Companies.ToListAsync(cancellationToken);
+        if (companies.Count == 0)
+        {
+            companies = new List<Company>
+            {
+                new() { Id = Guid.NewGuid(), Name = "ABC İnşaat A.Ş.", TaxNumber = "1234567890", Address = "İstanbul", Phone = "0212 111 11 11", Email = "info@abcinsaat.com", CreatedAt = now },
+                new() { Id = Guid.NewGuid(), Name = "XYZ Yapı Ltd.", TaxNumber = "9876543210", Address = "Ankara", Phone = "0312 222 22 22", Email = "iletisim@xyzyapi.com", CreatedAt = now }
+            };
+            db.Companies.AddRange(companies);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek firmalar eklendi.");
+        }
+
+        var constructionSites = await db.ConstructionSites.ToListAsync(cancellationToken);
+        if (constructionSites.Count == 0)
+        {
+            constructionSites = new List<ConstructionSite>
+            {
+                new() { Id = Guid.NewGuid(), Name = "Kartal Proje Sahası", Address = "Kartal, İstanbul", StartDate = now.AddMonths(-2), CreatedAt = now },
+                new() { Id = Guid.NewGuid(), Name = "Çankaya Şantiye", Address = "Çankaya, Ankara", StartDate = now.AddMonths(-1), CreatedAt = now }
+            };
+            db.ConstructionSites.AddRange(constructionSites);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek şantiyeler eklendi.");
+        }
+
+        var cranes = await db.Cranes.ToListAsync(cancellationToken);
+        var operatorUser = await db.Users.FirstOrDefaultAsync(u => u.Role == UserRole.Operatör, cancellationToken);
+        if (cranes.Count == 0)
+        {
+            cranes = new List<Crane>
+            {
+                new() { Id = Guid.NewGuid(), Code = "VNC-001", Name = "Mobil Vinç 1", Type = "Mobil", Location = "Kartal", Status = "Aktif", ConstructionSiteId = constructionSites[0].Id, AssignedOperatorId = operatorUser?.Id, CreatedAt = now },
+                new() { Id = Guid.NewGuid(), Code = "VNC-002", Name = "Kule Vinç 1", Type = "Kule", Location = "Çankaya", Status = "Aktif", ConstructionSiteId = constructionSites.Count > 1 ? constructionSites[1].Id : null, CreatedAt = now }
+            };
+            db.Cranes.AddRange(cranes);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek vinçler eklendi.");
+        }
+
+        if (!await db.WorkPlans.AnyAsync(cancellationToken))
+        {
+            var workPlans = new List<WorkPlan>
+            {
+                new() { Id = Guid.NewGuid(), Title = "Kartal A Blok Vinç Hizmeti", CraneId = cranes[0].Id, ConstructionSiteId = constructionSites[0].Id, PlannedStart = now.AddDays(7), PlannedEnd = now.AddMonths(2), Status = "Planlandı", CompanyId = companies[0].Id, CreatedAt = now },
+                new() { Id = Guid.NewGuid(), Title = "Çankaya Temel Çalışması", CraneId = cranes.Count > 1 ? cranes[1].Id : cranes[0].Id, ConstructionSiteId = constructionSites.Count > 1 ? constructionSites[1].Id : constructionSites[0].Id, PlannedStart = now.AddDays(14), PlannedEnd = now.AddMonths(3), Status = "Planlandı", CompanyId = companies.Count > 1 ? companies[1].Id : companies[0].Id, CreatedAt = now }
+            };
+            db.WorkPlans.AddRange(workPlans);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek iş planları eklendi.");
+
+            if (!await db.ProgressPayments.AnyAsync(cancellationToken))
+            {
+                var wp = await db.WorkPlans.FirstAsync(cancellationToken);
+                var progressPayments = new List<ProgressPayment>
+                {
+                    new() { Id = Guid.NewGuid(), WorkPlanId = wp.Id, CompanyId = companies[0].Id, Amount = 50000m, Period = "2024-01", Status = "Beklemede", CreatedAt = now }
+                };
+                db.ProgressPayments.AddRange(progressPayments);
+                await db.SaveChangesAsync(cancellationToken);
+                logger.LogInformation("Seed örnek hakediş eklendi.");
+            }
+        }
+
+        if (!await db.IncomeExpenses.AnyAsync(cancellationToken))
+        {
+            var incomeExpenses = new List<IncomeExpense>
+            {
+                new() { Id = Guid.NewGuid(), Type = IncomeExpenseType.Gelir, Category = "Kiralama", Amount = 25000m, Date = now.AddDays(-10), Description = "Ocak kira geliri", ReferenceType = ReferenceType.Manuel, CompanyId = companies[0].Id, CreatedAt = now },
+                new() { Id = Guid.NewGuid(), Type = IncomeExpenseType.Gider, Category = "Bakım", Amount = 5000m, Date = now.AddDays(-5), Description = "Vinç periyodik bakım", ReferenceType = ReferenceType.Manuel, CreatedAt = now }
+            };
+            db.IncomeExpenses.AddRange(incomeExpenses);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek gelir-gider eklendi.");
+        }
+
+        if (!await db.MaintenanceRecords.AnyAsync(cancellationToken) && cranes.Count > 0)
+        {
+            var maintenanceRecords = new List<MaintenanceRecord>
+            {
+                new() { Id = Guid.NewGuid(), CraneId = cranes[0].Id, MaintenanceDate = now.AddDays(-15), Description = "Periyodik kontrol", Type = "Periyodik", NextDueDate = now.AddMonths(3), CreatedAt = now }
+            };
+            db.MaintenanceRecords.AddRange(maintenanceRecords);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek bakım kaydı eklendi.");
+        }
+
+        if (!await db.Sliders.AnyAsync(cancellationToken))
+        {
+            var sliders = new List<Slider>
+            {
+                new() { Id = Guid.NewGuid(), Title = "TORE VINC Hoş Geldiniz", ShortText = "Profesyonel vinç hizmeti", ImageUrl = "https://picsum.photos/1200/400", SortOrder = 1, IsActive = true, CreatedAt = now },
+                new() { Id = Guid.NewGuid(), Title = "Güvenilir ve Hızlı", ShortText = "7/24 destek", ImageUrl = null, SortOrder = 2, IsActive = true, CreatedAt = now }
+            };
+            db.Sliders.AddRange(sliders);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek slider eklendi.");
+        }
+
+        if (!await db.News.AnyAsync(cancellationToken))
+        {
+            var news = new List<News>
+            {
+                new() { Id = Guid.NewGuid(), Title = "Yeni Projelerimiz", Summary = "2024 projeleri açıklandı.", Body = "İçerik metni...", IsPublished = true, PublishedAt = now.AddDays(-3), CreatedAt = now },
+                new() { Id = Guid.NewGuid(), Title = "Bakım Duyurusu", Summary = "Periyodik bakım programı.", Body = "Detaylar...", IsPublished = false, CreatedAt = now }
+            };
+            db.News.AddRange(news);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek haber eklendi.");
+        }
+
+        if (!await db.GalleryItems.AnyAsync(cancellationToken))
+        {
+            var galleryItems = new List<GalleryItem>
+            {
+                new() { Id = Guid.NewGuid(), Title = "Proje 1", ImageUrl = "https://picsum.photos/400/300", SortOrder = 1, IsActive = true, CreatedAt = now },
+                new() { Id = Guid.NewGuid(), Title = "Proje 2", ImageUrl = null, SortOrder = 2, IsActive = true, CreatedAt = now }
+            };
+            db.GalleryItems.AddRange(galleryItems);
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("Seed örnek galeri eklendi.");
+        }
+
+        var settingKeys = new[] { "SiteAdi", "LogoUrl", "SiteAciklama", "SmtpHost", "FromAddress" };
+        foreach (var key in settingKeys)
+        {
+            if (await db.SystemSettings.AnyAsync(s => s.Key == key, cancellationToken))
+                continue;
+            db.SystemSettings.Add(new SystemSetting { Id = Guid.NewGuid(), Key = key, Value = key == "SiteAdi" ? "TORE VINC" : "", CreatedAt = now });
+        }
+        await db.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Seed örnek sistem ayarları eklendi.");
+    }
 }

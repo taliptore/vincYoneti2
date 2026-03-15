@@ -88,6 +88,8 @@ var app = builder.Build();
 await DataSeeder.EnsureAdminUserAsync(app.Services);
 // Rol ve menü tabloları + varsayılan menüler (Admin rolüne atanır)
 await DataSeeder.EnsureRolesAndMenusAsync(app.Services);
+// Örnek senaryo verileri (firma, vinç, iş planı, gelir-gider, bakım, CMS, ayarlar)
+await DataSeeder.EnsureSampleDataAsync(app.Services);
 
 // Pipeline: Exception middleware en üstte
 app.UseMiddleware<ExceptionMiddleware>();

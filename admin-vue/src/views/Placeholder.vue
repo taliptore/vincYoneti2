@@ -1,26 +1,22 @@
 <script setup>
 import { useRoute } from 'vue-router'
+import EmptyState from '../components/ui/EmptyState.vue'
+
 const route = useRoute()
+const title = route.meta?.title || (typeof route.name === 'string' ? route.name : route.name?.toString()) || 'Sayfa'
 </script>
 
 <template>
-  <div class="placeholder">
-    <h1>{{ route.name || route.path }}</h1>
-    <p>Bu sayfa henüz implemente edilmedi.</p>
+  <div class="placeholder-page">
+    <h1 class="placeholder-title">{{ title }}</h1>
+    <EmptyState
+      message="Bu modül yakında eklenecek."
+      icon="🚧"
+    />
   </div>
 </template>
 
 <style scoped>
-.placeholder {
-  padding: 20px 0;
-}
-.placeholder h1 {
-  margin: 0 0 8px;
-  font-size: 1.25rem;
-  color: #374151;
-}
-.placeholder p {
-  margin: 0;
-  color: #6b7280;
-}
+.placeholder-page { padding: 24px; text-align: center; }
+.placeholder-title { font-size: 1.25rem; color: #374151; margin-bottom: 16px; }
 </style>
