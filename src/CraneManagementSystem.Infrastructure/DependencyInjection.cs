@@ -40,6 +40,27 @@ public static class DependencyInjection
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IAuthService, AuthService>();
 
+        // Application services
+        services.AddScoped<UserService>();
+        services.AddScoped<CompanyService>();
+        services.AddScoped<CraneService>();
+        services.AddScoped<ConstructionSiteService>();
+        services.AddScoped<WorkPlanService>();
+        services.AddScoped<ProgressPaymentService>();
+        services.AddScoped<DailyWageService>();
+        services.AddScoped<OvertimeService>();
+        services.AddScoped<IncomeExpenseService>();
+        services.AddScoped<FuelTrackingService>();
+        services.AddScoped<MaintenanceService>();
+        services.AddScoped<ReportService>();
+        services.AddScoped<SystemSettingService>();
+        services.AddScoped<IDashboardService, DashboardService>();
+        services.AddScoped<IHomePageService, HomePageService>();
+        services.AddScoped<NewsService>();
+        services.AddScoped<AnnouncementService>();
+        services.AddScoped<ContactService>();
+        services.AddScoped<AppointmentService>();
+
         return services;
     }
 }
