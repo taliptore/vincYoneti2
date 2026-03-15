@@ -1,4 +1,6 @@
-# Vinç Yönetim Sistemi – ASP.NET Core Web API Backend Planı
+# TORE VINC – Vinç Yönetim Sistemi | Backend + Panel + Mobil Planı
+
+Bu sistem **TORE VINC** firması için geliştirilir ve firmaya aittir. **Web API backend** (tek kaynak), **yönetim paneli** (web), **mobil uygulama** (iOS/Android).
 
 ## Mimari Özet
 
@@ -17,7 +19,14 @@
 
 ## 3–6. Application, Persistence, Infrastructure, API
 
-Detaylı DTO, Repository, Service, Controller listesi ve rol bazlı yetkilendirme PLAN.md'nin tam sürümünde (Cursor plan dosyasında) yer alır.
+Detaylı DTO, Repository, Service, Controller listesi ve rol bazlı yetkilendirme planın tam sürümünde yer alır.
+
+## Mobil Uygulama
+
+- **Aynı Web API** kullanılır; ayrı backend yok. JWT ile giriş.
+- **Teknoloji seçenekleri:** .NET MAUI, Flutter, React Native.
+- **Rol bazlı mobil ekranlar:** Admin (özet, onaylar); Muhasebe (hakediş, yevmiye, mesai, gelir-gider); Operatör (vinç/şantiye, yakıt girişi, bakım, yevmiye/mesai); Firma (randevu, kendi hakedişleri).
+- Proje: ayrı solution veya `src/ToreVinc.Mobile` (MAUI) / `mobile/` (Flutter/RN).
 
 ## 7. Yönetim Paneli Modülleri (Rol Matrisi)
 
