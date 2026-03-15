@@ -1,6 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <ProjectReference Include="..\CraneManagementSystem.Domain\CraneManagementSystem.Domain.csproj" />
   </ItemGroup>
 

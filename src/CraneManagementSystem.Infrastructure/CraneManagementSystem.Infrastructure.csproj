@@ -1,6 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
     <ProjectReference Include="..\CraneManagementSystem.Application\CraneManagementSystem.Application.csproj" />
     <ProjectReference Include="..\CraneManagementSystem.Persistence\CraneManagementSystem.Persistence.csproj" />
   </ItemGroup>
