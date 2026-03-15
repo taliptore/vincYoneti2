@@ -23,7 +23,7 @@ onMounted(async () => {
 <template>
   <div class="dashboard">
     <h1 class="dashboard-title">Dashboard</h1>
-    <p class="dashboard-welcome">Hoş geldiniz, {{ auth.user?.fullName || auth.user?.email }} ({{ auth.role }})</p>
+    <p class="dashboard-welcome">Hoş geldiniz, {{ auth.user?.fullName || auth.user?.email || 'Kullanıcı' }} ({{ auth.role || '—' }})</p>
 
     <div v-if="loading" class="dashboard-loading">
       <div class="spinner" />

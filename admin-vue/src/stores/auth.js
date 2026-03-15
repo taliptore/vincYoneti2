@@ -20,11 +20,15 @@ export const useAuthStore = defineStore('auth', {
       const { data } = await api.post('/api/auth/login', { email, password })
       const token = data.token
       const role = this.roleFromCode(data.role) ?? data.role ?? null
+      const user = { email: data.email, fullName: data.fullName, userId: data.userId }
       localStorage.setItem('token', token)
       if (role != null) localStorage.setItem('role', String(role))
+      try {
+        localStorage.setItem('user', JSON.stringify(user))
+      } catch (_) {}
       this.token = token
       this.role = role
-      this.user = { email: data.email, fullName: data.fullName, userId: data.userId }
+      this.user = user
       return data
     },
     logout() {
@@ -33,10 +37,17 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       localStorage.removeItem('token')
       localStorage.removeItem('role')
+      localStorage.removeItem('user')
     },
     initFromStorage() {
       this.token = localStorage.getItem('token')
       this.role = localStorage.getItem('role')
+      try {
+        const u = localStorage.getItem('user')
+        this.user = u ? JSON.parse(u) : null
+      } catch (_) {
+        this.user = null
+      }
     }
   }
 })
