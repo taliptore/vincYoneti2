@@ -105,3 +105,6 @@ app.MapControllers();
 app.MapGet("/", () => Results.Ok(new { message = "Crane Management System API", version = "1" }));
 
 app.Run();
+
+// Integration test için WebApplicationFactory erişimi
+public partial class Program { }
