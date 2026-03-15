@@ -370,4 +370,431 @@ public static class DataSeeder
         await db.SaveChangesAsync(cancellationToken);
         logger.LogInformation("Seed örnek sistem ayarları eklendi.");
     }
+
+    /// <summary>Tüm tablolara en az 5'er örnek veri ekler (eksik olanları tamamlar).</summary>
+    public static async Task EnsureFullSampleDataAsync(IServiceProvider serviceProvider, CancellationToken cancellationToken = default)
+    {
+        using var scope = serviceProvider.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+        const int targetCount = 5;
+        var now = DateTime.UtcNow;
+
+        var companies = await db.Companies.ToListAsync(cancellationToken);
+        var needCompanies = targetCount - companies.Count;
+        if (needCompanies > 0)
+        {
+            var names = new[] { "Demir İnşaat A.Ş.", "Beta Yapı Ltd.", "Güneş Proje A.Ş.", "Yıldız Taahhüt", "Kartal Mühendislik" };
+            for (var i = 0; i < needCompanies; i++)
+            {
+                db.Companies.Add(new Company
+                {
+                    Id = Guid.NewGuid(),
+                    Name = names[i % names.Length] + (i >= names.Length ? " " + (i + 1) : ""),
+                    TaxNumber = (1000000000 + i).ToString(),
+                    Address = i % 2 == 0 ? "İstanbul" : "Ankara",
+                    Phone = "0212 555 " + (i + 10).ToString("00 00"),
+                    Email = "info@firma" + (i + 1) + ".com",
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            companies = await db.Companies.ToListAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} firma eklendi.", needCompanies);
+        }
+
+        var constructionSites = await db.ConstructionSites.ToListAsync(cancellationToken);
+        var needSites = targetCount - constructionSites.Count;
+        if (needSites > 0)
+        {
+            var siteNames = new[] { "Ataşehir Proje", "Kadıköy Şantiye", "Ümraniye İnşaat", "Beşiktaş Sahası", "Şişli Merkez" };
+            for (var i = 0; i < needSites; i++)
+            {
+                db.ConstructionSites.Add(new ConstructionSite
+                {
+                    Id = Guid.NewGuid(),
+                    Name = siteNames[i % siteNames.Length] + (i >= siteNames.Length ? " " + (i + 1) : ""),
+                    Address = "İstanbul",
+                    StartDate = now.AddMonths(-(i + 1)),
+                    EndDate = now.AddMonths(6),
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            constructionSites = await db.ConstructionSites.ToListAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} şantiye eklendi.", needSites);
+        }
+
+        var cranes = await db.Cranes.ToListAsync(cancellationToken);
+        var needCranes = targetCount - cranes.Count;
+        if (needCranes > 0)
+        {
+            var operatorUser = await db.Users.FirstOrDefaultAsync(u => u.Role == UserRole.Operatör, cancellationToken);
+            var types = new[] { "Mobil", "Kule", "Paletli", "Tekerlekli", "Seyyar" };
+            for (var i = 0; i < needCranes; i++)
+            {
+                var idx = cranes.Count + i;
+                db.Cranes.Add(new Crane
+                {
+                    Id = Guid.NewGuid(),
+                    Code = "VNC-" + (idx + 1).ToString("000"),
+                    Name = types[i % types.Length] + " Vinç " + (idx + 1),
+                    Type = types[i % types.Length],
+                    Location = "Şantiye " + (idx + 1),
+                    Status = "Aktif",
+                    ConstructionSiteId = constructionSites[idx % constructionSites.Count].Id,
+                    AssignedOperatorId = operatorUser?.Id,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            cranes = await db.Cranes.ToListAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} vinç eklendi.", needCranes);
+        }
+
+        var workPlans = await db.WorkPlans.ToListAsync(cancellationToken);
+        var needWorkPlans = targetCount - workPlans.Count;
+        if (needWorkPlans > 0)
+        {
+            for (var i = 0; i < needWorkPlans; i++)
+            {
+                var idx = workPlans.Count + i;
+                db.WorkPlans.Add(new WorkPlan
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "İş Planı " + (idx + 1) + " - " + constructionSites[idx % constructionSites.Count].Name,
+                    CraneId = cranes[idx % cranes.Count].Id,
+                    ConstructionSiteId = constructionSites[idx % constructionSites.Count].Id,
+                    PlannedStart = now.AddDays(10 + idx),
+                    PlannedEnd = now.AddMonths(2 + idx),
+                    Status = idx % 3 == 0 ? "Planlandı" : idx % 3 == 1 ? "Devam Ediyor" : "Tamamlandı",
+                    CompanyId = companies[idx % companies.Count].Id,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            workPlans = await db.WorkPlans.ToListAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} iş planı eklendi.", needWorkPlans);
+        }
+
+        var progressCount = await db.ProgressPayments.CountAsync(cancellationToken);
+        var needProgress = targetCount - progressCount;
+        if (needProgress > 0)
+        {
+            for (var i = 0; i < needProgress; i++)
+            {
+                var idx = progressCount + i;
+                db.ProgressPayments.Add(new ProgressPayment
+                {
+                    Id = Guid.NewGuid(),
+                    WorkPlanId = workPlans[idx % workPlans.Count].Id,
+                    CompanyId = companies[idx % companies.Count].Id,
+                    Amount = 30000m + (idx * 5000),
+                    Period = "2024-" + (idx % 12 + 1).ToString("00"),
+                    Status = idx % 3 == 0 ? "Beklemede" : idx % 3 == 1 ? "Onaylandı" : "Ödendi",
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} hakediş eklendi.", needProgress);
+        }
+
+        var incomeCount = await db.IncomeExpenses.CountAsync(cancellationToken);
+        var needIncome = Math.Max(0, targetCount - incomeCount);
+        if (needIncome > 0)
+        {
+            for (var i = 0; i < needIncome; i++)
+            {
+                var isGelir = i % 2 == 0;
+                db.IncomeExpenses.Add(new IncomeExpense
+                {
+                    Id = Guid.NewGuid(),
+                    Type = isGelir ? IncomeExpenseType.Gelir : IncomeExpenseType.Gider,
+                    Category = isGelir ? "Kiralama" : "Bakım",
+                    Amount = isGelir ? 20000m + (i * 1000) : 3000m + (i * 500),
+                    Date = now.AddDays(-(i + 5)),
+                    Description = (isGelir ? "Gelir " : "Gider ") + (i + 1),
+                    ReferenceType = ReferenceType.Manuel,
+                    CompanyId = companies[i % companies.Count].Id,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} gelir-gider eklendi.", needIncome);
+        }
+
+        var maintenanceCount = await db.MaintenanceRecords.CountAsync(cancellationToken);
+        var needMaintenance = targetCount - maintenanceCount;
+        if (needMaintenance > 0 && cranes.Count > 0)
+        {
+            var types = new[] { "Periyodik", "Arıza", "Revizyon", "Kontrol", "Yağlama" };
+            for (var i = 0; i < needMaintenance; i++)
+            {
+                db.MaintenanceRecords.Add(new MaintenanceRecord
+                {
+                    Id = Guid.NewGuid(),
+                    CraneId = cranes[i % cranes.Count].Id,
+                    MaintenanceDate = now.AddDays(-(i + 10)),
+                    Description = types[i % types.Length] + " bakım " + (i + 1),
+                    Type = types[i % types.Length],
+                    NextDueDate = now.AddMonths(3 + i),
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} bakım kaydı eklendi.", needMaintenance);
+        }
+
+        var sliderCount = await db.Sliders.CountAsync(cancellationToken);
+        var needSliders = targetCount - sliderCount;
+        if (needSliders > 0)
+        {
+            var titles = new[] { "Profesyonel Hizmet", "Güvenilir Ekip", "7/24 Destek", "Kalite Taahhüdü", "Müşteri Memnuniyeti" };
+            for (var i = 0; i < needSliders; i++)
+            {
+                var idx = sliderCount + i;
+                db.Sliders.Add(new Slider
+                {
+                    Id = Guid.NewGuid(),
+                    Title = titles[i % titles.Length],
+                    ShortText = "Slider açıklama " + (idx + 1),
+                    ImageUrl = idx % 2 == 0 ? "https://picsum.photos/1200/400?r=" + idx : null,
+                    SortOrder = idx + 1,
+                    IsActive = true,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} slider eklendi.", needSliders);
+        }
+
+        var newsCount = await db.News.CountAsync(cancellationToken);
+        var needNews = targetCount - newsCount;
+        if (needNews > 0)
+        {
+            for (var i = 0; i < needNews; i++)
+            {
+                var idx = newsCount + i;
+                db.News.Add(new News
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Haber Başlığı " + (idx + 1),
+                    Summary = "Özet metni " + (idx + 1),
+                    Body = "İçerik gövdesi...",
+                    ImageUrl = idx % 2 == 0 ? "https://picsum.photos/800/400?n=" + idx : null,
+                    IsPublished = idx % 5 != 4,
+                    PublishedAt = idx % 5 != 4 ? now.AddDays(-idx) : (DateTime?)null,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} haber eklendi.", needNews);
+        }
+
+        var galleryCount = await db.GalleryItems.CountAsync(cancellationToken);
+        var needGallery = targetCount - galleryCount;
+        if (needGallery > 0)
+        {
+            for (var i = 0; i < needGallery; i++)
+            {
+                var idx = galleryCount + i;
+                db.GalleryItems.Add(new GalleryItem
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Galeri " + (idx + 1),
+                    ImageUrl = "https://picsum.photos/400/300?g=" + idx,
+                    SortOrder = idx + 1,
+                    IsActive = true,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} galeri eklendi.", needGallery);
+        }
+
+        var settingKeysToEnsure = new[] { "SiteAdi", "LogoUrl", "SiteAciklama", "SmtpHost", "FromAddress", "SmtpPort", "FromName", "ApiBaseUrl" };
+        var existingKeys = await db.SystemSettings.Select(s => s.Key).ToListAsync(cancellationToken);
+        var keysToAdd = settingKeysToEnsure.Where(k => !existingKeys.Contains(k)).Take(Math.Max(0, targetCount - existingKeys.Count)).ToList();
+        foreach (var key in keysToAdd)
+        {
+            db.SystemSettings.Add(new SystemSetting
+            {
+                Id = Guid.NewGuid(),
+                Key = key,
+                Value = key == "SiteAdi" ? "TORE VINC" : key == "SmtpPort" ? "587" : "",
+                CreatedAt = now
+            });
+        }
+        if (keysToAdd.Count > 0)
+        {
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} sistem ayarı eklendi.", keysToAdd.Count);
+        }
+
+        var operators = await db.Users.Where(u => u.Role == UserRole.Operatör).ToListAsync(cancellationToken);
+        var assignmentCount = await db.OperatorAssignments.CountAsync(cancellationToken);
+        var needAssignments = targetCount - assignmentCount;
+        if (needAssignments > 0 && operators.Count > 0 && cranes.Count > 0)
+        {
+            for (var i = 0; i < needAssignments; i++)
+            {
+                var idx = assignmentCount + i;
+                db.OperatorAssignments.Add(new OperatorAssignment
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = operators[idx % operators.Count].Id,
+                    CraneId = cranes[idx % cranes.Count].Id,
+                    ConstructionSiteId = constructionSites[idx % constructionSites.Count].Id,
+                    StartDate = now.AddDays(-30 + idx),
+                    EndDate = now.AddMonths(2),
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} operatör ataması eklendi.", needAssignments);
+        }
+
+        var dailyCount = await db.DailyWageRecords.CountAsync(cancellationToken);
+        var needDaily = targetCount - dailyCount;
+        if (needDaily > 0 && operators.Count > 0)
+        {
+            for (var i = 0; i < needDaily; i++)
+            {
+                var idx = dailyCount + i;
+                db.DailyWageRecords.Add(new DailyWageRecord
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = operators[idx % operators.Count].Id,
+                    ConstructionSiteId = constructionSites[idx % constructionSites.Count].Id,
+                    WorkPlanId = workPlans.Count > 0 ? workPlans[idx % workPlans.Count].Id : null,
+                    Date = now.AddDays(-(idx + 5)),
+                    Amount = 500m + (idx * 50),
+                    Description = "Yevmiye " + (idx + 1),
+                    Status = "Ödendi",
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} yevmiye eklendi.", needDaily);
+        }
+
+        var overtimeCount = await db.OvertimeRecords.CountAsync(cancellationToken);
+        var needOvertime = targetCount - overtimeCount;
+        if (needOvertime > 0 && operators.Count > 0)
+        {
+            for (var i = 0; i < needOvertime; i++)
+            {
+                var idx = overtimeCount + i;
+                var hours = 2m + (idx % 4);
+                var rate = 100m;
+                db.OvertimeRecords.Add(new OvertimeRecord
+                {
+                    Id = Guid.NewGuid(),
+                    UserId = operators[idx % operators.Count].Id,
+                    Date = now.AddDays(-(idx + 3)),
+                    Hours = hours,
+                    Rate = rate,
+                    Amount = hours * rate,
+                    IsApproved = idx % 2 == 0,
+                    ApprovedByUserId = null,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} mesai eklendi.", needOvertime);
+        }
+
+        var fuelCount = await db.FuelRecords.CountAsync(cancellationToken);
+        var needFuel = targetCount - fuelCount;
+        if (needFuel > 0 && cranes.Count > 0 && operators.Count > 0)
+        {
+            for (var i = 0; i < needFuel; i++)
+            {
+                var idx = fuelCount + i;
+                db.FuelRecords.Add(new FuelRecord
+                {
+                    Id = Guid.NewGuid(),
+                    CraneId = cranes[idx % cranes.Count].Id,
+                    Quantity = 50m + (idx * 10),
+                    Unit = "Litre",
+                    Date = now.AddDays(-(idx + 2)),
+                    OperatorId = operators[idx % operators.Count].Id,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} yakıt kaydı eklendi.", needFuel);
+        }
+
+        var announcementCount = await db.Announcements.CountAsync(cancellationToken);
+        var needAnnouncements = targetCount - announcementCount;
+        if (needAnnouncements > 0)
+        {
+            for (var i = 0; i < needAnnouncements; i++)
+            {
+                var idx = announcementCount + i;
+                db.Announcements.Add(new Announcement
+                {
+                    Id = Guid.NewGuid(),
+                    Title = "Duyuru " + (idx + 1),
+                    Content = "Duyuru içeriği...",
+                    IsPinned = idx == 0,
+                    StartDate = now.AddDays(-idx),
+                    EndDate = now.AddMonths(1),
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} duyuru eklendi.", needAnnouncements);
+        }
+
+        var contactCount = await db.ContactMessages.CountAsync(cancellationToken);
+        var needContact = targetCount - contactCount;
+        if (needContact > 0)
+        {
+            for (var i = 0; i < needContact; i++)
+            {
+                var idx = contactCount + i;
+                db.ContactMessages.Add(new ContactMessage
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Ziyaretçi " + (idx + 1),
+                    Email = "ziyaretci" + (idx + 1) + "@test.com",
+                    Phone = "0532 111 " + (idx + 10).ToString("00 00"),
+                    Subject = "İletişim konu " + (idx + 1),
+                    Message = "Mesaj metni...",
+                    IsRead = idx % 2 == 0,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} iletişim mesajı eklendi.", needContact);
+        }
+
+        var appointmentCount = await db.Appointments.CountAsync(cancellationToken);
+        var needAppointments = targetCount - appointmentCount;
+        if (needAppointments > 0)
+        {
+            for (var i = 0; i < needAppointments; i++)
+            {
+                var idx = appointmentCount + i;
+                db.Appointments.Add(new Appointment
+                {
+                    Id = Guid.NewGuid(),
+                    CustomerName = "Müşteri " + (idx + 1),
+                    Email = "musteri" + (idx + 1) + "@test.com",
+                    Phone = "0533 222 " + (idx + 10).ToString("00 00"),
+                    PreferredDate = now.AddDays(7 + idx),
+                    Notes = "Randevu notu",
+                    Status = idx % 3 == 0 ? "Beklemede" : "Onaylandı",
+                    CompanyId = companies[idx % companies.Count].Id,
+                    CreatedAt = now
+                });
+            }
+            await db.SaveChangesAsync(cancellationToken);
+            logger.LogInformation("EnsureFullSample: {Count} randevu eklendi.", needAppointments);
+        }
+
+        logger.LogInformation("EnsureFullSampleData tamamlandı.");
+    }
 }

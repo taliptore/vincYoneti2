@@ -90,6 +90,8 @@ await DataSeeder.EnsureAdminUserAsync(app.Services);
 await DataSeeder.EnsureRolesAndMenusAsync(app.Services);
 // Örnek senaryo verileri (firma, vinç, iş planı, gelir-gider, bakım, CMS, ayarlar)
 await DataSeeder.EnsureSampleDataAsync(app.Services);
+// Tüm tablolara en az 5'er örnek veri (eksikleri tamamla)
+await DataSeeder.EnsureFullSampleDataAsync(app.Services);
 
 // Pipeline: Exception middleware en üstte
 app.UseMiddleware<ExceptionMiddleware>();
